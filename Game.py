@@ -147,14 +147,18 @@ class Game:
         print(move)
         code = self.chess_engine.updateMove(move)
         if code == 1:
+            # illegal move prompt GUI to open PlayerMoveError Page
             print("Error")
             self.player_move_error = True
         else:
             self.player_move_error = False
-        f = open("ChessRecord.txt", "a+")
-        f.write(chess.Move.from_uci(move).uci() + "\r\n")
-        f.close()
 
+            # write to Game.txt file
+            f = open("ChessRecord.txt", "a+")
+            f.write(chess.Move.from_uci(move).uci() + "\r\n")
+            f.close()
+
+        # check Game Over
         if self.chess_engine.engBoard.is_checkmate():
             self.winner = "You win!"
             self.over = True
