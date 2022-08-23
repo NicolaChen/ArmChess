@@ -1,3 +1,6 @@
+import sys
+sys.path.append('CVChess')
+sys.path.append('Arm')
 import tkinter as tk
 from tkinter import *
 
