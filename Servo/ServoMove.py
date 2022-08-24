@@ -72,6 +72,16 @@ class ServoMove:
         self.pwm_angle[0] = angle_2
         self.pwm_angle[1] = angle_3
 
+    def getTherm(self):
+        buf_1 = bytes(self.ftRead(1, 0x3F, 0x01))
+        self.serial.write(buf_1)
+        print("Now reading servo1 temperature.")
+        while True:
+            if self.serial.in_waiting:
+                res = self.serial.read(size=7)
+                break
+        print(res)
+
     @staticmethod
     def getLowByte(val):
         return int(bin(val & 0xFF)[2:], 2)
@@ -84,8 +94,8 @@ class ServoMove:
         buf = [0 for _ in range(13)]
         buf[0] = buf[1] = 0xFF
         buf[2] = n
-        buf[3] = 9
-        buf[4] = 3
+        buf[3] = 0x09
+        buf[4] = 0x03
         buf[5] = 0x2A
         buf[6] = self.getLowByte(p)
         buf[7] = self.getHighByte(p)
@@ -93,7 +103,6 @@ class ServoMove:
         buf[9] = self.getHighByte(t)
         buf[10] = self.getLowByte(v)
         buf[11] = self.getHighByte(v)
-        # print(CheckSum(buf[2:-1]).get()[2:])
         buf[12] = int(CheckSum(buf[2:-1]).get()[2:], 16)
         return buf
 
@@ -101,8 +110,8 @@ class ServoMove:
         buf = [0 for _ in range(13)]
         buf[0] = buf[1] = 0xFF
         buf[2] = n
-        buf[3] = 9
-        buf[4] = 3
+        buf[3] = 0x09
+        buf[4] = 0x03
         buf[5] = 0x2A
         buf[6] = self.getHighByte(p)
         buf[7] = self.getLowByte(p)
@@ -111,8 +120,18 @@ class ServoMove:
         buf[10] = self.getHighByte(v)
         buf[11] = self.getLowByte(v)
         buf[12] = int(CheckSum(buf[2:-1]).get()[2:], 16)
-        # print(buf)
-        # print(CheckSum(buf[2:-1]).get()[2:])
+        return buf
+
+    @staticmethod
+    def ftRead(n, address, val_len):
+        buf = [0 for _ in range(8)]
+        buf[0] = buf[1] = 0xFF
+        buf[2] = n
+        buf[3] = 0x04
+        buf[4] = 0x02
+        buf[5] = address
+        buf[6] = val_len
+        buf[7] = int(CheckSum(buf[2:-1]).get()[2:], 16)
         return buf
 
     def closeSerial(self):
