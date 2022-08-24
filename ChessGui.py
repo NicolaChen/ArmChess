@@ -1,10 +1,7 @@
-import sys
-sys.path.append('CVChess')
-sys.path.append('Arm')
 import tkinter as tk
 from tkinter import *
 
-from Game import Game
+from CVChess.Game import Game
 
 LARGE_FONT = ("system", 20)
 MED_FONT = ("system", 12)
@@ -21,7 +18,7 @@ class Application(tk.Tk):
         gui.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        self.game = Game()
+        self.game = Game.Game()
         self.move = StringVar()
         self.move.set("e2e4")
         self.winner = StringVar()

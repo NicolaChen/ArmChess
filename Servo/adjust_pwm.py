@@ -1,6 +1,6 @@
 import time
 
-from ServoMove import ServoMove
+from Servo.ServoMove import ServoMove
 
 s = ServoMove()
 i = 0

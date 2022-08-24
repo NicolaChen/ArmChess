@@ -1,7 +1,5 @@
-import time
-
-from InverseKinematics import IK
-from ServoMove import ServoMove
+from Arm.InverseKinematics import IK
+from Servo.ServoMove import ServoMove
 
 
 class ArmMove:
@@ -17,7 +15,8 @@ class ArmMove:
         self.rot_adjust_2 = 12.5
         self.rot_adjust_3 = -9
         self.rot_adjust_5 = -5
-        self.angle_adjust = [185, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420, 150 + self.rot_adjust_2 + self.rot_adjust_3 + self.rot_adjust_5, 0]
+        self.angle_adjust = [185, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
+                             150 + self.rot_adjust_2 + self.rot_adjust_3 + self.rot_adjust_5, 0]
         self.ik = IK()
         self.center = [361, 0, 359]
         print("Arm initialize complete.")
@@ -60,11 +59,11 @@ class ArmMove:
 
     def servoMatGen(self, coordinate=None):
 
-        if coordinate == None:
+        if coordinate is None:
             coordinate = self.center
         res = self.ik.getJointsAngles(coordinate, 270, 180)
-        print(res)        # debug
-        if res == False:
+        print(res)  # debug
+        if not res:
             return False
         return [[self.angle_adjust[0] + res['rot_j1'], 0, 0],
                 [self.angle_adjust[1] + res['rot_j2'], 0, 0],
@@ -75,13 +74,12 @@ class ArmMove:
 
     def armMove(self, coordinate=None):
 
-        if coordinate == None:
+        if coordinate is None:
             coordinate = self.center
         matrix = self.servoMatGen(coordinate)
-        if matrix == False:
+        if not matrix:
             print("Can not move to that coordinate.")
             return False
         else:
             self.servos.servoMove(matrix)
             return True
-

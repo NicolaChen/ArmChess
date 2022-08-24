@@ -1,9 +1,6 @@
-import sys
-sys.path.append('../Servo')
-
-from ArmMove import *
 import time
 
+from Arm.ArmMove import *
 
 arm = ArmMove()
 

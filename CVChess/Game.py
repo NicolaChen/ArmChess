@@ -5,9 +5,9 @@ from datetime import datetime
 import chess
 import cv2
 
-from BoardRecognition import BoardRecognition
-from Camera import Camera
-from ChessEng import ChessEng
+from CVChess.BoardRecognition import BoardRecognition
+from CVChess.Camera import Camera
+from CVChess.ChessEng import ChessEng
 
 
 class Game:

@@ -3,9 +3,9 @@ import math
 import cv2
 import numpy as np
 
-from Board import Board
-from Line import Line
-from Square import Square
+from CVChess.Board import Board
+from CVChess.Line import Line
+from CVChess.Square import Square
 
 debug = False
 

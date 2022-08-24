@@ -130,5 +130,5 @@ dmypy.json
 
 # custom
 Stockfish-sf_15/
-.idea
 ChessRecord.txt
+.idea

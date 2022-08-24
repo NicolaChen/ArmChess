@@ -1,4 +1,3 @@
-# import the necessary package
 import threading
 import time
 
