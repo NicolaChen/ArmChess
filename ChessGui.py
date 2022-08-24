@@ -18,7 +18,7 @@ class Application(tk.Tk):
         gui.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        self.game = Game.Game()
+        self.game = Game()
         self.move = StringVar()
         self.move.set("e2e4")
         self.winner = StringVar()
