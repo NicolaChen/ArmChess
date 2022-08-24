@@ -1,39 +1,31 @@
 import time
 
 from InverseKinematics import IK
-from Servo.ServoMove import *
+from ServoMove import ServoMove
 
 
 class ArmMove:
 
     def __init__(self):
         self.servos = ServoMove()
-        self.p_j1_360 = 180
-        self.p_j2_360 = 180
-        self.p_j3_360 = 180
-        self.p_j4_300 = 150
-        self.p_j5_300 = 150
-        self.p_j6_300 = 150
-        self.servos.servoMove([[self.p_j1_360, 0, 0],
-                               [self.p_j2_360, 0, 0],
-                               [self.p_j3_360, 0, 0],
-                               [self.p_j4_300, 0, 0],
-                               [self.p_j5_300, 0, 0],
-                               [self.p_j3_360, 0, 0]])
-        self.angle_adjust = [180,
-                             90,
-                             90,
-                             420,
-                             240,
-                             0]
+        self.servos.servoMove([[180, 0, 0],
+                               [180, 0, 0],
+                               [180, 0, 0],
+                               [150, 0, 0],
+                               [150, 0, 0],
+                               [150, 0, 0]])
+        self.rot_adjust_2 = 12.5
+        self.rot_adjust_3 = -9
+        self.rot_adjust_5 = -5
+        self.angle_adjust = [185, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420, 150 + self.rot_adjust_2 + self.rot_adjust_3 + self.rot_adjust_5, 0]
         self.ik = IK()
-        self.center = [300, 0, 100]
+        self.center = [361, 0, 359]
         print("Arm initialize complete.")
 
     def armCSInit(self):
 
         print("Begin coordinate system initialization.")
-        self.armMove(self.center)
+        self.armMove()
         print("Arm has moved to original center point: %s." % self.center)
         while True:
             while True:
@@ -44,14 +36,16 @@ class ArmMove:
             while True:
                 adjust_distance = input("Please input distance you want to adjust with, FLOAT is acceptable.\r\n")
                 try:
-                    if -500 < eval(adjust_distance) < 500:
-                        break
-                    print("Invalid input! Number too big.")
-                except TypeError:
+                    eval(adjust_distance)
+                except NameError:
                     print("Invalid input! Not a number.")
+                    continue
+                if -500 < eval(adjust_distance) < 500:
+                    break
+                print("Invalid input! Number too big.")
             self.center[['x', 'y', 'z'].index(adjust_direction)] += eval(adjust_distance)
             print("New center: %s" % self.center)
-            move_flag = self.armMove(self.center)
+            move_flag = self.armMove()
             if move_flag:
                 print("Arm has moved to new center: %s." % self.center)
             else:
@@ -64,9 +58,12 @@ class ArmMove:
                 print("Continue arm center adjustment.")
         print("Arm center adjustment complete. Current center point: %s." % self.center)
 
-    def servoMatGen(self, coordinate):
+    def servoMatGen(self, coordinate=None):
 
+        if coordinate == None:
+            coordinate = self.center
         res = self.ik.getJointsAngles(coordinate, 270, 180)
+        print(res)        # debug
         if res == False:
             return False
         return [[self.angle_adjust[0] + res['rot_j1'], 0, 0],
@@ -76,8 +73,10 @@ class ArmMove:
                 [self.angle_adjust[4] - res['rot_j5'], 0, 0],
                 [self.angle_adjust[5] + 0, 0, 0]]
 
-    def armMove(self, coordinate):
+    def armMove(self, coordinate=None):
 
+        if coordinate == None:
+            coordinate = self.center
         matrix = self.servoMatGen(coordinate)
         if matrix == False:
             print("Can not move to that coordinate.")

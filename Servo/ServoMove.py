@@ -43,13 +43,13 @@ class ServoMove:
                     print("Servo%2d move fail!" % (i + 1))
 
         self.serial.write(serial_write_buf)
-        print(serial_write_buf)
+        # print(serial_write_buf)
 
         old_angle_2 = self.pwm_angle[0]
         old_angle_3 = self.pwm_angle[1]
         angle_2 = angle_matrix[1][0]
         angle_3 = angle_matrix[2][0]
-        time_gap = 0.05
+        time_gap = 0.01
 
         # solve 1
         # step = 20
@@ -61,7 +61,7 @@ class ServoMove:
         #     time.sleep(time_gap)
 
         # solve 2
-        delta_x = 0.1
+        delta_x = 0.05
         for p in np.arange(np.pi / -2, np.pi / 2, delta_x):
             pulse_2 = 2000 * (old_angle_2 + (angle_2 - old_angle_2) * (np.sin(p) + 1) / 2) / self.angle_range[1] + 500
             pulse_3 = 2000 * (old_angle_3 + (angle_3 - old_angle_3) * (np.sin(p) + 1) / 2) / self.angle_range[2] + 500
@@ -93,7 +93,7 @@ class ServoMove:
         buf[9] = self.getHighByte(t)
         buf[10] = self.getLowByte(v)
         buf[11] = self.getHighByte(v)
-        print(CheckSum(buf[2:-1]).get()[2:])
+        # print(CheckSum(buf[2:-1]).get()[2:])
         buf[12] = int(CheckSum(buf[2:-1]).get()[2:], 16)
         return buf
 
@@ -111,8 +111,8 @@ class ServoMove:
         buf[10] = self.getHighByte(v)
         buf[11] = self.getLowByte(v)
         buf[12] = int(CheckSum(buf[2:-1]).get()[2:], 16)
-        print(buf)
-        print(CheckSum(buf[2:-1]).get()[2:])
+        # print(buf)
+        # print(CheckSum(buf[2:-1]).get()[2:])
         return buf
 
     def closeSerial(self):
