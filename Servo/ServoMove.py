@@ -3,8 +3,8 @@ import time
 import numpy as np
 import serial
 
-from Servo.pwm_servo.PCA9685 import PCA9685
-from Servo.uart_servo.MyCheckSum import MyCheckSum as CheckSum
+from pwm_servo.PCA9685 import PCA9685
+from uart_servo.MyCheckSum import MyCheckSum as CheckSum
 
 
 class ServoMove:
@@ -63,8 +63,8 @@ class ServoMove:
         # solve 2
         delta_x = 0.1
         for p in np.arange(np.pi / -2, np.pi / 2, delta_x):
-            pulse_2 = 2000 * (old_angle_2 + (angle_2 - old_angle_2) * (np.sin(p) + 1) / 2)
-            pulse_3 = 2000 * (old_angle_3 + (angle_3 - old_angle_3) * (np.sin(p) + 1) / 2)
+            pulse_2 = 2000 * (old_angle_2 + (angle_2 - old_angle_2) * (np.sin(p) + 1) / 2) / self.angle_range[1] + 500
+            pulse_3 = 2000 * (old_angle_3 + (angle_3 - old_angle_3) * (np.sin(p) + 1) / 2) / self.angle_range[2] + 500
             self.pwm.setServoPulse(0, pulse_2)
             self.pwm.setServoPulse(1, pulse_3)
             time.sleep(time_gap)
