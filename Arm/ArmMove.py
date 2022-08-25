@@ -6,17 +6,17 @@ class ArmMove:
 
     def __init__(self):
         self.servos = ServoMove()
-        self.servos.servoMove([[180, 0, 0],
-                               [180, 0, 0],
-                               [180, 0, 0],
+        self.servos.servoMove([[180 + 4.1, 0, 0],
+                               [180 + 12.7 - 4, 0, 0],
+                               [180 - 10 + 4, 0, 0],
                                [150, 0, 0],
-                               [150, 0, 0],
+                               [150 - 1.5, 0, 0],
                                [150, 0, 0]])
-        self.rot_adjust_2 = 12.5
-        self.rot_adjust_3 = -9
-        self.rot_adjust_5 = -5
-        self.angle_adjust = [185, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
-                             150 + self.rot_adjust_2 + self.rot_adjust_3 + self.rot_adjust_5, 0]
+        self.rot_adjust_2 = 12.7 - 4
+        self.rot_adjust_3 = -10 + 4
+        self.rot_adjust_5 = -1.5    #-1.5
+        self.angle_adjust = [180 + 4.1, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
+                             150 + self.rot_adjust_5, 0]
         self.ik = IK()
         self.center = [361, 0, 359]
         print("Arm initialize complete.")
