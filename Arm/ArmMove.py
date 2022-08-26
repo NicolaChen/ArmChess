@@ -18,7 +18,7 @@ class ArmMove:
         self.angle_adjust = [180 + 4.1 + 0.9, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
                              150 + self.rot_adjust_5, 0]
         self.ik = IK()
-        self.center = [361, 0, 359]
+        self.center = [293, 0, 10]
         print("Arm initialize complete.")
 
     def armCSInit(self):
@@ -65,7 +65,7 @@ class ArmMove:
         print(res)  # debug
         if not res:
             return False
-        return [[self.angle_adjust[0] + res['rot_j1'], 0, 0],
+        return [[self.angle_adjust[0] - res['rot_j1'], 0, 0],
                 [self.angle_adjust[1] + res['rot_j2'], 0, 0],
                 [self.angle_adjust[2] + res['rot_j3'], 0, 0],
                 [self.angle_adjust[3] - res['rot_j4'], 0, 0],
