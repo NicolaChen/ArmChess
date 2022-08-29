@@ -1,3 +1,4 @@
+import time
 import tkinter as tk
 from tkinter import *
 
@@ -55,7 +56,6 @@ class StartGamePage(tk.Frame):
         start_button = tk.Button(self, text="Start Chess Game", font=MED_FONT,
                                  command=lambda: [controller.showFrame(InitializePage), controller.game.setUp()])
         start_button.pack(pady=30)
-        # TODO: Add arm gesture initialize code
 
 
 class InitializePage(tk.Frame):
@@ -144,11 +144,13 @@ class ChooseColorPage(tk.Frame):
         color_label.pack()
 
         white_button = tk.Button(self, text="White(Blue)", font=MED_FONT,
-                                 command=lambda: [controller.showFrame(PlayerMovePage)])
+                                 command=lambda: [controller.showFrame(PlayerMovePage),
+                                                  controller.game.setArmSide('Black')])
         white_button.pack(pady=10)
         black_button = tk.Button(self, text="Black(Red)", font=MED_FONT,
                                  command=lambda: [controller.showFrame(EngineMovePage),
-                                                  controller.move.set(controller.game.engineMove())])
+                                                  controller.move.set(controller.game.chess_engine.getEngineMove()),
+                                                  controller.game.setArmSide('White')])
         black_button.pack(pady=10)
 
 
@@ -182,7 +184,6 @@ class PlayerMovePage(tk.Frame):
         """
         Detect player's move and show in label, then check the game
         """
-        # TODO: Combine detect&move, new function generates Game.playerMove
         self.ctr.game.detectPlayerMove()
         self.text.set(self.ctr.game.player_move)
         self.after(5000, self.checkValid_P)
@@ -200,7 +201,7 @@ class PlayerMovePage(tk.Frame):
             self.ctr.game.current = self.ctr.game.previous
             self.ctr.showFrame(PlayerMoveErrorPage)
         else:
-            self.ctr.move.set(self.ctr.game.engineMove())
+            self.ctr.move.set(self.ctr.game.chess_engine.getEngineMove())
             self.ctr.showFrame(EngineMovePage)
 
 
@@ -218,10 +219,12 @@ class EngineMovePage(tk.Frame):
         self.ctr = controller
 
     def run(self):
-        # TODO: Add Servo move control codes
         self.after(1000, self.engineCheckBoard)
 
     def engineCheckBoard(self):
+        self.ctr.game.armMoveChess()
+        time.sleep(2)
+        self.ctr.game.engineMove()
         self.ctr.game.updateCurrent()
         self.ctr.game.checkEngineMove()  # Involving Game.boardMatchError
 
@@ -303,7 +306,7 @@ class ChoosePromotionPage(tk.Frame):
             controller.game.current = controller.game.previous
             controller.showFrame(PlayerMoveErrorPage)
         else:
-            controller.move.set(controller.game.engineMove())
+            controller.move.set(controller.game.chess_engine.getEngineMove())
             controller.showFrame(EngineMovePage)
 
     @staticmethod
@@ -317,7 +320,7 @@ class ChoosePromotionPage(tk.Frame):
             controller.game.current = controller.game.previous
             controller.showFrame(PlayerMoveErrorPage)
         else:
-            controller.move.set(controller.game.engineMove())
+            controller.move.set(controller.game.chess_engine.getEngineMove())
             controller.showFrame(EngineMovePage)
 
     @staticmethod
@@ -331,7 +334,7 @@ class ChoosePromotionPage(tk.Frame):
             controller.game.current = controller.game.previous
             controller.showFrame(PlayerMoveErrorPage)
         else:
-            controller.move.set(controller.game.engineMove())
+            controller.move.set(controller.game.chess_engine.getEngineMove())
             controller.showFrame(EngineMovePage)
 
     @staticmethod
@@ -345,7 +348,7 @@ class ChoosePromotionPage(tk.Frame):
             controller.game.current = controller.game.previous
             controller.showFrame(PlayerMoveErrorPage)
         else:
-            controller.move.set(controller.game.engineMove())
+            controller.move.set(controller.game.chess_engine.getEngineMove())
             controller.showFrame(EngineMovePage)
 
 

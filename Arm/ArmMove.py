@@ -1,4 +1,9 @@
+import time
+
+import numpy as np
+
 from Arm.InverseKinematics import IK
+from Arm.Pump import Pump
 from Servo.ServoMove import ServoMove
 
 
@@ -18,7 +23,10 @@ class ArmMove:
         self.angle_adjust = [180 + 4.1 + 0.9, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
                              150 + self.rot_adjust_5, 0]
         self.ik = IK()
-        self.center = [293, 0, 10]
+        self.center = [300, 0, 400]
+        self.board_matrix = np.load("./test/chess_board_matrix.npy")
+        self.outSpaceCnt = 0
+        self.pump = Pump()
         print("Arm initialize complete.")
 
     def armCSInit(self):
@@ -83,3 +91,85 @@ class ArmMove:
         else:
             self.servos.servoMove(matrix)
             return True
+
+    def armMoveChess(self, arm_side, uci_move, en_passant_flag=0, capture_flag=0):
+
+        if capture_flag:
+            self.moveChess_out(arm_side, uci_move[2:], self.outSpaceManagement())
+        # in-board move
+        self.moveChess_in(arm_side, uci_move)
+
+        # special condition
+        if en_passant_flag:
+            self.moveChess_out(arm_side, uci_move[0] + uci_move[3], self.outSpaceManagement())
+        elif uci_move in ['e1g1', 'e1c1', 'e8g8', 'e8c8']:
+            if uci_move == 'e1g1':
+                self.moveChess_in(arm_side, 'h1f1')
+            elif uci_move == 'e1c1':
+                self.moveChess_in(arm_side, 'a1d1')
+            elif uci_move == 'e8g8':
+                self.moveChess_in(arm_side, 'h8f8')
+            else:
+                self.moveChess_in(arm_side, 'a8d8')
+        # arm return to center
+        self.armMove(self.center)
+
+    def moveChess_in(self, arm_side, uci_move):
+
+        col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+        if arm_side == 'Black':
+            i0 = 7 - col.index(uci_move[0])
+            j0 = 8 - uci_move[1]
+            i1 = 7 - col.index(uci_move[2])
+            j1 = 8 - uci_move[3]
+        else:
+            i0 = col.index(uci_move[0])
+            j0 = uci_move[1] - 1
+            i1 = col.index(uci_move[2])
+            j1 = uci_move[3] - 1
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 15])
+        self.pump.capture()
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
+        time.sleep(1)
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 15])
+        self.pump.release()
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
+
+    def moveChess_out(self, arm_side, ori_pos, des_pos):
+
+        col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+        if type(ori_pos) == str:
+            if arm_side == 'Black':
+                i0 = 7 - col.index(ori_pos[0])
+                j0 = 8 - ori_pos[1]
+            else:
+                i0 = col.index(ori_pos[0])
+                j0 = ori_pos[1] - 1
+            i1, j1 = des_pos
+        else:
+            if arm_side == 'Black':
+                i0 = 7 - col.index(des_pos[0])
+                j0 = 8 - des_pos[1]
+            else:
+                i0 = col.index(des_pos[0])
+                j0 = des_pos[1] - 1
+            i1, j1 = ori_pos
+
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 15])
+        self.pump.capture()
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
+        time.sleep(1)
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 15])
+        self.pump.release()
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
+
+    def outSpaceManagement(self):
+
+        x = 300
+        y = -180  # temporary set fixed
+        self.outSpaceCnt += 1
+        return x, y

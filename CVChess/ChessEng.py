@@ -9,6 +9,7 @@ class ChessEng:
         self.engBoard = chess.Board()
         self.engine = chess.engine.SimpleEngine.popen_uci("CVChess/Stockfish-sf_15/src/stockfish")
         self.time = 0.1
+        self.engine_move = None
         print(self.engBoard)
 
     def updateMove(self, move):
@@ -23,10 +24,14 @@ class ChessEng:
             print(self.engBoard)
             return 0
 
+    def getEngineMove(self):
+
+        self.engine_move = self.engine.play(self.engBoard, chess.engine.Limit(time=self.time)).move
+        return self.engine_move
+
     def feedToEngine(self):
 
-        result = self.engine.play(self.engBoard, chess.engine.Limit(time=self.time))
-        best_move = result.move
+        best_move = self.engine_move
         self.engBoard.push(best_move)
 
         f = open("ChessRecord.txt", "a+")

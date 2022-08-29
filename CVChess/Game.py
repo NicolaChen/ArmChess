@@ -5,6 +5,7 @@ from datetime import datetime
 import chess
 import cv2
 
+from Arm.ArmMove import ArmMove
 from CVChess.BoardRecognition import BoardRecognition
 from CVChess.Camera import Camera
 from CVChess.ChessEng import ChessEng
@@ -27,6 +28,8 @@ class Game:
         self.player_move = "Unknown"
         self.player_move_error = False
         self.board_match_error = False
+        self.arm = ArmMove()
+        self.arm_side = "Unknown"
 
     def setUp(self):
         """
@@ -39,6 +42,7 @@ class Game:
         f = open("ChessRecord.txt", "a+")
         f.write("New chess game at: " + str(datetime.now()) + "\r\n")
         f.close()
+        self.arm.armMove()
 
     def caliCam(self):
         """
@@ -74,7 +78,6 @@ class Game:
         if self.chess_engine.engBoard.is_checkmate():
             self.winner = "Engine Wins!"
             self.over = True
-        return self.engine_latest_move
 
     def detectPlayerMove(self):
         """
@@ -162,3 +165,14 @@ class Game:
         if self.chess_engine.engBoard.is_checkmate():
             self.winner = "You win!"
             self.over = True
+
+    def setArmSide(self, side):
+        self.arm_side = side
+
+    def armMoveChess(self):
+        if self.chess_engine.engBoard.is_en_passant(chess.Move.from_uci(self.engine_latest_move)):
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move, 1)
+        elif self.chess_engine.engBoard.is_capture(chess.Move.from_uci(self.engine_latest_move)):
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move, 0, 1)
+        else:
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move)
