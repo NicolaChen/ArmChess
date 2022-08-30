@@ -178,8 +178,8 @@ class Board:
         square_two = second_largest_square
 
         if debug:
-            square_one.draw(copy, (255, 0, 0), 1)
-            square_two.draw(copy, (255, 0, 0), 1)
+            square_one.draw(copy, (255, 0, 0), 2)
+            square_two.draw(copy, (255, 0, 0), 2)
             cv2.imshow("previous", previous)
             # cv2.imshow("identified", copy)
 
@@ -209,7 +209,7 @@ class Board:
                     self.promo = False
             self.move = square_one.position + square_two.position
             if debug:
-                square_two.draw(copy, (0, 255, 0), 1)
+                square_two.draw(copy, (0, 255, 0), 3)
                 cv2.imshow('move', copy)
                 cv2.waitKey(0)
                 cv2.destroyAllWindows()
@@ -227,7 +227,7 @@ class Board:
                     self.promo = False
             self.move = square_two.position + square_one.position
             if debug:
-                square_one.draw(copy, (0, 255, 0), 1)
+                square_one.draw(copy, (0, 255, 0), 3)
                 cv2.imshow('move', copy)
                 cv2.waitKey(0)
                 cv2.destroyAllWindows()

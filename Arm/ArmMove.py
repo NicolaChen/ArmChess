@@ -23,7 +23,7 @@ class ArmMove:
         self.angle_adjust = [180 + 4.1 + 0.9, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
                              150 + self.rot_adjust_5, 0]
         self.ik = IK()
-        self.center = [300, 0, 400]
+        self.center = [170, 0, 140]
         self.board_matrix = np.load("./test/chess_board_matrix.npy")
         self.outSpaceCnt = 0
         self.pump = Pump()
@@ -130,11 +130,12 @@ class ArmMove:
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 15])
         self.pump.capture()
+        time.sleep(2)
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
-        time.sleep(1)
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 15])
         self.pump.release()
+        time.sleep(1)
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
 
     def moveChess_out(self, arm_side, ori_pos, des_pos):
@@ -148,28 +149,36 @@ class ArmMove:
                 i0 = col.index(ori_pos[0])
                 j0 = eval(ori_pos[1]) - 1
             i1, j1 = des_pos
+            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
+            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 15])
+            self.pump.capture()
+            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
+            time.sleep(1)
+            self.armMove([i1, j1, 100])
+            self.armMove([i1, j1, 15])
+            self.pump.release()
+            self.armMove([i1, j1, 100])
         else:
+            i0, j0 = ori_pos
             if arm_side == 'Black':
-                i0 = 7 - col.index(des_pos[0])
-                j0 = 8 - eval(des_pos[1])
+                i1 = 7 - col.index(des_pos[0])
+                j1 = 8 - eval(des_pos[1])
             else:
-                i0 = col.index(des_pos[0])
-                j0 = eval(des_pos[1]) - 1
-            i1, j1 = ori_pos
-
-        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
-        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 15])
-        self.pump.capture()
-        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
-        time.sleep(1)
-        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
-        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 15])
-        self.pump.release()
-        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
+                i1 = col.index(des_pos[0])
+                j1 = eval(des_pos[1]) - 1
+            self.armMove([i0, j0, 100])
+            self.armMove([i0, j0, 15])
+            self.pump.capture()
+            self.armMove([i0, j0, 100])
+            time.sleep(1)
+            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
+            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 15])
+            self.pump.release()
+            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
 
     def outSpaceManagement(self):
 
-        x = 300
-        y = -180  # temporary set fixed
+        x = 200
+        y = -200  # temporary set fixed
         self.outSpaceCnt += 1
         return x, y

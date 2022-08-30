@@ -169,7 +169,7 @@ class Game:
     def setArmSide(self, side):
         self.arm_side = side
 
-    def armMoveChess(self):
+    def moveChess(self):
         self.engine_latest_move = self.chess_engine.engine_move
         if self.chess_engine.engBoard.is_en_passant(chess.Move.from_uci(self.engine_latest_move.uci())):
             self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 1)

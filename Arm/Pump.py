@@ -1,18 +1,19 @@
 import wiringpi
 from wiringpi import GPIO
+wPi = 13
 
 
 class Pump:
 
     def __init__(self):
         wiringpi.wiringPiSetup()
-        wiringpi.pinMode(5, GPIO.OUTPUT)
+        wiringpi.pinMode(wPi, GPIO.OUTPUT)
         self.release()
 
     @staticmethod
     def capture():
-        wiringpi.digitalWrite(5, GPIO.HIGH)
+        wiringpi.digitalWrite(wPi, GPIO.HIGH)
 
     @staticmethod
     def release():
-        wiringpi.digitalWrite(5, GPIO.LOW)
+        wiringpi.digitalWrite(wPi, GPIO.LOW)

@@ -222,9 +222,8 @@ class EngineMovePage(tk.Frame):
         self.after(1000, self.engineCheckBoard)
 
     def engineCheckBoard(self):
-        self.ctr.game.armMoveChess()
-        time.sleep(2)
-        self.ctr.game.engineMove()
+        self.ctr.game.moveChess()
+        time.sleep(1)
         self.ctr.game.updateCurrent()
         self.ctr.game.checkEngineMove()  # Involving Game.boardMatchError
 
@@ -232,16 +231,18 @@ class EngineMovePage(tk.Frame):
 
     def checkValid_E(self):
 
-        if self.ctr.game.over:
-            self.ctr.winner.set(self.ctr.game.winner)
-            self.ctr.showFrame(GameOverPage)
-        elif self.ctr.game.is_check:
-            self.ctr.showFrame(InCheckPage)
-        elif self.ctr.game.board_match_error:
+        if self.ctr.game.board_match_error:
             self.ctr.game.current = self.ctr.game.previous
             self.ctr.showFrame(BoardMatchErrorPage)
         else:
-            self.ctr.showFrame(PlayerMovePage)
+            self.ctr.game.engineMove()
+            if self.ctr.game.over:
+                self.ctr.winner.set(self.ctr.game.winner)
+                self.ctr.showFrame(GameOverPage)
+            elif self.ctr.game.is_check:
+                self.ctr.showFrame(InCheckPage)
+            else:
+                self.ctr.showFrame(PlayerMovePage)
 
 
 class ConfirmPage(tk.Frame):
