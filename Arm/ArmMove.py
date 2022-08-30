@@ -130,12 +130,12 @@ class ArmMove:
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 15])
         self.pump.capture()
-        time.sleep(2)
+        time.sleep(0.5)
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 15])
         self.pump.release()
-        time.sleep(1)
+        time.sleep(1.5)
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
 
     def moveChess_out(self, arm_side, ori_pos, des_pos):

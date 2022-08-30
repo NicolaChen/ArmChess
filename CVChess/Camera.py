@@ -29,7 +29,7 @@ class Camera:
             cv2.putText(frame_copy, str(cv2.mean(frame)[0] + cv2.mean(frame)[1] + cv2.mean(frame)[2]), (100, 300),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0))
             cv2.imshow("calibration", frame_copy)  # TODO: Figure out how to fix the position of imshow window
-            if cv2.waitKey(100) == 27:
+            if cv2.waitKey(100) == 27 or cv2.Laplacian(frame, cv2.CV_64F).var() > 400:
                 self.laplacian_threshold = cv2.Laplacian(frame, cv2.CV_64F).var()
                 print(self.laplacian_threshold)
                 cv2.destroyWindow("calibration")
