@@ -13,24 +13,34 @@ class ServoMove:
         self.step_range = [4096, 0, 0, 1024, 1024, 1024]
         self.angle_range = [360, 360, 360, 300, 300, 300]
         self.servo_type = ["FTT", "PWM", "PWM", "FTC", "FTC", "FTC"]
-        self.pwm_angle = [180, 180]
+        self.servo_angle = [180, 180, 180, 150, 150, 150]
 
         self.serial = serial.Serial('/dev/ttyS4', 115200)
         self.pwm = PCA9685(0x40)
         self.pwm.setPWMFreq(50)
-        self.pwm.setServoPulse(0, 1500)
-        self.pwm.setServoPulse(1, 1500)
 
     def servoMove(self, angle_matrix):  # TODO: Figure out how duration and speed affect FTT/FTC
 
-        serial_write_buf = []
-        for i in range(6):
-            angle = angle_matrix[i][0]
-            if angle > self.angle_range[i]:
-                angle = self.angle_range[i]
+        old_angle_2 = self.servo_angle[1]
+        old_angle_3 = self.servo_angle[2]
+        angle_2 = angle_matrix[1][0]
+        angle_3 = angle_matrix[2][0]
+        time_gap = 0.01
+        delta_x = 0.05
 
-            if self.servo_type[i] != "PWM":
-                step = round(self.step_range[i] * angle / self.angle_range[i])
+        for p in np.arange(np.pi / -2, np.pi / 2, delta_x):
+            serial_write_buf = []
+
+            for i in [0, 3, 4, 5]:
+                ori_angle = self.servo_angle[i]
+                aim_angle = angle_matrix[i][0]
+                if aim_angle > self.angle_range[i]:
+                    aim_angle = self.angle_range[i]
+                elif aim_angle < 0:
+                    aim_angle = 0
+
+                step = round(self.step_range[i] * (ori_angle + (aim_angle - ori_angle) * (np.sin(p) + 1) / 2) /
+                             self.angle_range[i])
                 if self.servo_type[i] == "FTT":
                     buf_t = bytes(self.ftMoveT(i + 1, step, angle_matrix[i][1], angle_matrix[i][2]))
                     for j in buf_t:
@@ -41,36 +51,16 @@ class ServoMove:
                         serial_write_buf.append(k)
                 else:
                     print("Servo%2d move fail!" % (i + 1))
-
-        self.serial.write(serial_write_buf)
-        # print(serial_write_buf)
-
-        old_angle_2 = self.pwm_angle[0]
-        old_angle_3 = self.pwm_angle[1]
-        angle_2 = angle_matrix[1][0]
-        angle_3 = angle_matrix[2][0]
-        time_gap = 0.01
-
-        # solve 1
-        # step = 20
-        # for a, b in zip(np.linspace(old_angle_2, angle_2, step), np.linspace(old_angle_3, angle_3, step)):
-        #     pulse_2 = 2000 * a / self.angle_range[1] + 500
-        #     pulse_3 = 2000 * b / self.angle_range[2] + 500
-        #     self.pwm.setServoPulse(0, pulse_2)
-        #     self.pwm.setServoPulse(1, pulse_3)
-        #     time.sleep(time_gap)
-
-        # solve 2
-        delta_x = 0.05
-        for p in np.arange(np.pi / -2, np.pi / 2, delta_x):
             pulse_2 = 2000 * (old_angle_2 + (angle_2 - old_angle_2) * (np.sin(p) + 1) / 2) / self.angle_range[1] + 500
             pulse_3 = 2000 * (old_angle_3 + (angle_3 - old_angle_3) * (np.sin(p) + 1) / 2) / self.angle_range[2] + 500
             self.pwm.setServoPulse(0, pulse_2)
             self.pwm.setServoPulse(1, pulse_3)
+            self.serial.write(serial_write_buf)
+
             time.sleep(time_gap)
 
-        self.pwm_angle[0] = angle_2
-        self.pwm_angle[1] = angle_3
+        for i in range(6):
+            self.servo_angle[i] = angle_matrix[i][0]
 
     def getTherm(self):
         buf_1 = bytes(self.ftRead(1, 0x3F, 0x01))
