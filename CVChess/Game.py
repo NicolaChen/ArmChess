@@ -73,7 +73,7 @@ class Game:
         """
         Feeds current board to engine; Returns engine's new move
         """
-        self.engine_latest_move = self.chess_engine.feedToEngine()
+        self.chess_engine.feedToEngine()
         self.is_check = self.chess_engine.engBoard.is_check()
         if self.chess_engine.engBoard.is_checkmate():
             self.winner = "Engine Wins!"
@@ -170,9 +170,10 @@ class Game:
         self.arm_side = side
 
     def armMoveChess(self):
-        if self.chess_engine.engBoard.is_en_passant(chess.Move.from_uci(self.engine_latest_move)):
-            self.arm.armMoveChess(self.arm_side, self.engine_latest_move, 1)
-        elif self.chess_engine.engBoard.is_capture(chess.Move.from_uci(self.engine_latest_move)):
-            self.arm.armMoveChess(self.arm_side, self.engine_latest_move, 0, 1)
+        self.engine_latest_move = self.chess_engine.engine_move
+        if self.chess_engine.engBoard.is_en_passant(chess.Move.from_uci(self.engine_latest_move.uci())):
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 1)
+        elif self.chess_engine.engBoard.is_capture(chess.Move.from_uci(self.engine_latest_move.uci())):
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 1)
         else:
-            self.arm.armMoveChess(self.arm_side, self.engine_latest_move)
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci())

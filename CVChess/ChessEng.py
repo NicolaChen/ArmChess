@@ -39,4 +39,3 @@ class ChessEng:
         f.close()
 
         print(self.engBoard)
-        return best_move

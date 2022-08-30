@@ -119,14 +119,14 @@ class ArmMove:
         col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
         if arm_side == 'Black':
             i0 = 7 - col.index(uci_move[0])
-            j0 = 8 - uci_move[1]
+            j0 = 8 - eval(uci_move[1])
             i1 = 7 - col.index(uci_move[2])
-            j1 = 8 - uci_move[3]
+            j1 = 8 - eval(uci_move[3])
         else:
             i0 = col.index(uci_move[0])
-            j0 = uci_move[1] - 1
+            j0 = eval(uci_move[1]) - 1
             i1 = col.index(uci_move[2])
-            j1 = uci_move[3] - 1
+            j1 = eval(uci_move[3]) - 1
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 15])
         self.pump.capture()
@@ -143,18 +143,18 @@ class ArmMove:
         if type(ori_pos) == str:
             if arm_side == 'Black':
                 i0 = 7 - col.index(ori_pos[0])
-                j0 = 8 - ori_pos[1]
+                j0 = 8 - eval(ori_pos[1])
             else:
                 i0 = col.index(ori_pos[0])
-                j0 = ori_pos[1] - 1
+                j0 = eval(ori_pos[1]) - 1
             i1, j1 = des_pos
         else:
             if arm_side == 'Black':
                 i0 = 7 - col.index(des_pos[0])
-                j0 = 8 - des_pos[1]
+                j0 = 8 - eval(des_pos[1])
             else:
                 i0 = col.index(des_pos[0])
-                j0 = des_pos[1] - 1
+                j0 = eval(des_pos[1]) - 1
             i1, j1 = ori_pos
 
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
