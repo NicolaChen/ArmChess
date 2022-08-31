@@ -23,8 +23,8 @@ class ArmMove:
         self.angle_adjust = [180 + 4.1 + 0.9, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
                              150 + self.rot_adjust_5, 0]
         self.ik = IK()
-        self.center = [170, 0, 140]
-        self.board_matrix = np.load("./test/chess_board_matrix.npy")
+        self.center = [200, 0, 150]
+        self.board_matrix = np.load("./test/chess_board_matrix.npy")    # set None if need to adjust board_matrix
         self.outSpaceCnt = 0
         self.pump = Pump()
         print("Arm initialize complete.")
@@ -70,7 +70,7 @@ class ArmMove:
         if coordinate is None:
             coordinate = self.center
         res = self.ik.getJointsAngles(coordinate, 270, 180)
-        print(res)  # debug
+        # print(res)  # debug
         if not res:
             return False
         return [[self.angle_adjust[0] - res['rot_j1'], 0, 0],
@@ -127,16 +127,16 @@ class ArmMove:
             j0 = eval(uci_move[1]) - 1
             i1 = col.index(uci_move[2])
             j1 = eval(uci_move[3]) - 1
-        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 150])
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 15])
         self.pump.capture()
-        time.sleep(0.5)
-        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
-        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
+        time.sleep(0.8)
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 150])
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 15])
         self.pump.release()
-        time.sleep(1.5)
-        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
+        time.sleep(1.0)
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
 
     def moveChess_out(self, arm_side, ori_pos, des_pos):
 
@@ -149,15 +149,15 @@ class ArmMove:
                 i0 = col.index(ori_pos[0])
                 j0 = eval(ori_pos[1]) - 1
             i1, j1 = des_pos
-            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
+            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 150])
             self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 15])
             self.pump.capture()
-            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 100])
+            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 150])
             time.sleep(1)
-            self.armMove([i1, j1, 100])
+            self.armMove([i1, j1, 150])
             self.armMove([i1, j1, 15])
             self.pump.release()
-            self.armMove([i1, j1, 100])
+            self.armMove([i1, j1, 150])
         else:
             i0, j0 = ori_pos
             if arm_side == 'Black':
@@ -166,15 +166,15 @@ class ArmMove:
             else:
                 i1 = col.index(des_pos[0])
                 j1 = eval(des_pos[1]) - 1
-            self.armMove([i0, j0, 100])
+            self.armMove([i0, j0, 150])
             self.armMove([i0, j0, 15])
             self.pump.capture()
-            self.armMove([i0, j0, 100])
+            self.armMove([i0, j0, 150])
             time.sleep(1)
-            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
+            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
             self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 15])
             self.pump.release()
-            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 100])
+            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
 
     def outSpaceManagement(self):
 

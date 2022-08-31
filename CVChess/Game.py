@@ -66,7 +66,7 @@ class Game:
         time.sleep(2)  # Give camera some time to focus, can be dismissed
         while True:
             self.current = self.camera.getFrame()
-            if abs(cv2.Laplacian(self.current, cv2.CV_64F).var() - self.camera.laplacian_threshold) < 50:
+            if abs(cv2.Laplacian(self.current, cv2.CV_64F).var() - self.camera.laplacian_threshold) < 100:
                 break
 
     def engineMove(self):

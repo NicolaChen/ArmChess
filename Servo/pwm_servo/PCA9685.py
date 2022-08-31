@@ -30,7 +30,12 @@ class PCA9685:
 
     def write(self, reg, value):
         """Writes an 8-bit value to the specified register/address"""
-        self.bus.write_byte_data(self.address, reg, value)
+        try:
+            self.bus.write_byte_data(self.address, reg, value)
+        except OSError:
+            print("PWM control board error, try again!!!")
+            time.sleep(0.01)
+            self.bus.write_byte_data(self.address, reg, value)
         if self.debug:
             print("I2C: Write 0x%02X to register 0x%02X" % (value, reg))
 

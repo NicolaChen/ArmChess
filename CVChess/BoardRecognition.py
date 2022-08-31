@@ -24,7 +24,7 @@ class BoardRecognition:
             while True:
                 self.image = self.cam.getFrame()
                 print(cv2.Laplacian(self.image, cv2.CV_64F).var())
-                if abs(cv2.Laplacian(self.image, cv2.CV_64F).var() - self.cam.laplacian_threshold) < 20:
+                if abs(cv2.Laplacian(self.image, cv2.CV_64F).var() - self.cam.laplacian_threshold) < 100:
                     break
             thresh_image = self.cleanImage(self.image)
             max_contour, self.square_scale, self.contour_perimeter = self.getContour(self.image, thresh_image)

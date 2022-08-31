@@ -183,15 +183,14 @@ class PlayerMovePage(tk.Frame):
         show_move_label.pack()
 
         self.text = StringVar()
-        self.text.set("Unknown")
         player_move_label = tk.Label(self, textvariable=self.text, font=MED_FONT)
         player_move_label.pack()
 
         self.ctr = controller
 
     def run(self):
-        self.text.set("Unknown")
-        self.after(1, self.waitPlayerMove)
+        self.text.set("Waiting for your move ...")
+        self.after(100, self.waitPlayerMove)
 
     def waitPlayerMove(self):
         """
@@ -199,7 +198,7 @@ class PlayerMovePage(tk.Frame):
         """
         self.ctr.game.detectPlayerMove()
         self.text.set(self.ctr.game.player_move)
-        self.after(500, self.checkValid_P)
+        self.after(3000, self.checkValid_P)
 
     def checkValid_P(self):
         """
@@ -232,15 +231,15 @@ class EngineMovePage(tk.Frame):
         self.ctr = controller
 
     def run(self):
-        self.after(1000, self.engineCheckBoard)
+        self.after(100, self.engineCheckBoard)
 
     def engineCheckBoard(self):
         self.ctr.game.moveChess()
-        time.sleep(1)
+        time.sleep(0.5)
         self.ctr.game.updateCurrent()
         self.ctr.game.checkEngineMove()  # Involving Game.boardMatchError
 
-        self.after(1, self.checkValid_E)
+        self.after(100, self.checkValid_E)
 
     def checkValid_E(self):
 
