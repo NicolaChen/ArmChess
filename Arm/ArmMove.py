@@ -11,12 +11,6 @@ class ArmMove:
 
     def __init__(self):
         self.servos = ServoMove()
-        self.servos.servoMove([[180 + 4.1 + 0.9, 0, 0],
-                               [180 + 12.7, 0, 0],
-                               [180 - 10, 0, 0],
-                               [150, 0, 0],
-                               [150 - 1.5, 0, 0],
-                               [150, 0, 0]])
         self.rot_adjust_2 = 12.7
         self.rot_adjust_3 = -10
         self.rot_adjust_5 = -1.5
@@ -24,9 +18,10 @@ class ArmMove:
                              150 + self.rot_adjust_5, 0]
         self.ik = IK()
         self.center = [200, 0, 150]
-        self.board_matrix = np.load("./test/chess_board_matrix.npy")    # set None if need to adjust board_matrix
+        self.board_matrix = np.load("./test/chess_board_matrix_new.npy")    # set None if need to adjust board_matrix
         self.outSpaceCnt = 0
         self.pump = Pump()
+        self.armMove()
         print("Arm initialize complete.")
 
     def armCSInit(self):
@@ -128,6 +123,7 @@ class ArmMove:
             i1 = col.index(uci_move[2])
             j1 = eval(uci_move[3]) - 1
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 150])
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 50])
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 15])
         self.pump.capture()
         time.sleep(0.8)
@@ -135,7 +131,8 @@ class ArmMove:
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 15])
         self.pump.release()
-        time.sleep(1.0)
+        time.sleep(1.5)
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 50])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
 
     def moveChess_out(self, arm_side, ori_pos, des_pos):

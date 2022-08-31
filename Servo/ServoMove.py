@@ -13,7 +13,7 @@ class ServoMove:
         self.step_range = [4096, 0, 0, 1024, 1024, 1024]
         self.angle_range = [360, 360, 360, 300, 300, 300]
         self.servo_type = ["FTT", "PWM", "PWM", "FTC", "FTC", "FTC"]
-        self.servo_angle = [180, 180, 180, 150, 150, 150]
+        self.servo_angle = [185, 128.96505375285784, 240.23068603953044, 150, 64.99573979238826, 0]
 
         self.serial = serial.Serial('/dev/ttyS4', 115200)
         self.pwm = PCA9685(0x40)
@@ -61,6 +61,7 @@ class ServoMove:
 
         for i in range(6):
             self.servo_angle[i] = angle_matrix[i][0]
+        # print(self.servo_angle)
 
     def getTherm(self):
         buf_1 = bytes(self.ftRead(1, 0x3F, 0x01))
