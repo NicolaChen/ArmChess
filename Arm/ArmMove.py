@@ -22,6 +22,12 @@ class ArmMove:
         self.outSpaceCnt = 0
         self.pump = Pump()
         self.armMove()
+        self.tomb_matrix = np.zeros((2, 8, 3))
+        for i in range(2):
+            for j in range(8):
+                self.tomb_matrix[i][j][0] = 200 + 36 * j
+                self.tomb_matrix[i][j][1] = -180 - 30 * i
+        self.tomb_index = [0, 0]
         print("Arm initialize complete.")
 
     def armCSInit(self):
@@ -87,21 +93,22 @@ class ArmMove:
             self.servos.servoMove(matrix)
             return True
 
-    def armMoveChess(self, arm_side, uci_move, en_passant_flag=0, capture_flag=0, promotion_flag=0,
+    def armMoveChess(self, arm_side, uci_move, piece_0, piece_1, en_passant_flag=0, capture_flag=0, promotion_flag=0,
                      h0=10, h1=10, h2=10):
 
         if capture_flag:
-            self.moveChess_out(arm_side, uci_move[2:4], self.outSpaceManagement(), h1)
+            self.moveChess_out(arm_side, uci_move[2:4], self.outSpaceManagement(piece_1, None), h1)
         # in-board move
         self.moveChess_in(arm_side, uci_move, h0)
 
         # special condition
         if promotion_flag:
-            self.moveChess_out(arm_side, uci_move[2:4], self.outSpaceManagement(), h0)
-            # TODO: Add out_space chess arrange or/and Queen specific position(prior)
-            self.moveChess_out(arm_side, self.outSpaceManagement(), uci_move[2:4], h2)
+            self.moveChess_out(arm_side, uci_move[2:4], self.outSpaceManagement(piece_0, None))
+            promo_code = ['Q', 'R', 'B', 'N']
+            self.moveChess_out(arm_side, self.outSpaceManagement(None, promo_code[promotion_flag - 1]), uci_move[2:4],
+                               h2)
         elif en_passant_flag:
-            self.moveChess_out(arm_side, uci_move[0] + uci_move[3], self.outSpaceManagement())
+            self.moveChess_out(arm_side, uci_move[0] + uci_move[3], self.outSpaceManagement(piece_0, None))
         elif uci_move in ['e1g1', 'e1c1', 'e8g8', 'e8c8']:
             if uci_move == 'e1g1':
                 self.moveChess_in(arm_side, 'h1f1', 20)
@@ -191,9 +198,20 @@ class ArmMove:
             self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 50])
             self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
 
-    def outSpaceManagement(self):
-        # TODO: Need optimization
-        x = 200
-        y = -200  # temporary set fixed
-        self.outSpaceCnt += 1
-        return x, y
+    def outSpaceManagement(self, receive_type=None, require_type=None):
+        if receive_type is not None and require_type is None:
+            x = self.tomb_matrix[self.tomb_index[0]][self.tomb_index[1]][0]
+            y = self.tomb_matrix[self.tomb_index[0]][self.tomb_index[1]][1]
+            self.tomb_matrix[self.tomb_index[0]][self.tomb_index[1]][2] = receive_type
+            self.tomb_index[1] += 1
+            if self.tomb_index[1] > 7:
+                self.tomb_index[0] = 2
+                self.tomb_index[1] = 0
+            return x, y
+        elif receive_type is None and require_type is not None:
+            for i in range(2):
+                for j in range(8):
+                    if self.tomb_matrix[i][j][2] == require_type:
+                        return self.tomb_matrix[i][j][0], self.tomb_matrix[i][j][1]
+        else:
+            return 300, -240

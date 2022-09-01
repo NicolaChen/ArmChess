@@ -176,7 +176,7 @@ class Game:
         h0 = h1 = 10
         self.engine_latest_move = self.chess_engine.engine_move
         piece_0 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[:2])))
-        piece_1 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[2:])))
+        piece_1 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[2:4])))
         if piece_0 in ["K", "Q"]:
             h0 = high
         elif piece_0 in ["B", "N", "R"]:
@@ -186,18 +186,29 @@ class Game:
         elif piece_1 in ["B", "N", "R"]:
             h1 = medium
         if self.chess_engine.engBoard.is_en_passant(chess.Move.from_uci(self.engine_latest_move.uci())):
-            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 1)
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
+                                  piece_0, piece_1, 1)
         elif len(self.engine_latest_move.uci()) == 5:
             piece_promo = self.engine_latest_move.uci()[-1]
             if piece_promo == "q":
                 h2 = high
+                promo_code = 1
             else:
                 h2 = medium
+                if piece_promo == "r":
+                    promo_code = 2
+                elif piece_promo == "B":
+                    promo_code = 3
+                else:
+                    promo_code = 4
             if self.chess_engine.engBoard.is_capture(chess.Move.from_uci(self.engine_latest_move.uci())):
-                self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 1, 1, h0, h1, h2)
+                self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
+                                      piece_0, piece_1, 0, 1, promo_code, h0, h1, h2)
             else:
-                self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 0, 1, h0, h1, h2)
+                self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 0, promo_code, h0, h1, h2)
         elif self.chess_engine.engBoard.is_capture(chess.Move.from_uci(self.engine_latest_move.uci())):
-            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 1, 0, h0, h1)
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
+                                  piece_0, piece_1, 0, 1, 0, h0, h1)
         else:
-            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 0, 0, h0)
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
+                                  piece_0, piece_1, 0, 0, 0, h0)
