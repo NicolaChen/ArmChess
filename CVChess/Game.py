@@ -170,10 +170,34 @@ class Game:
         self.arm_side = side
 
     def moveChess(self):
+
+        medium = 20
+        high = 30
+        h0 = h1 = 10
         self.engine_latest_move = self.chess_engine.engine_move
+        piece_0 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[:2])))
+        piece_1 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[2:])))
+        if piece_0 in ["K", "Q"]:
+            h0 = high
+        elif piece_0 in ["B", "N", "R"]:
+            h0 = medium
+        if piece_1 in ["K", "Q"]:
+            h1 = high
+        elif piece_1 in ["B", "N", "R"]:
+            h1 = medium
         if self.chess_engine.engBoard.is_en_passant(chess.Move.from_uci(self.engine_latest_move.uci())):
             self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 1)
+        elif len(self.engine_latest_move.uci()) == 5:
+            piece_promo = self.engine_latest_move.uci()[-1]
+            if piece_promo == "q":
+                h2 = high
+            else:
+                h2 = medium
+            if self.chess_engine.engBoard.is_capture(chess.Move.from_uci(self.engine_latest_move.uci())):
+                self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 1, 1, h0, h1, h2)
+            else:
+                self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 0, 1, h0, h1, h2)
         elif self.chess_engine.engBoard.is_capture(chess.Move.from_uci(self.engine_latest_move.uci())):
-            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 1)
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 1, 0, h0, h1)
         else:
-            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci())
+            self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 0, 0, h0)
