@@ -5,9 +5,9 @@ from tkinter import *
 
 from CVChess.Game import Game
 
-LARGE_FONT = ("system", 20)
-MED_FONT = ("system", 12)
-SMALL_FONT = ("system", 8)
+LARGE_FONT = ("system", 50)
+MED_FONT = ("system", 30)
+SMALL_FONT = ("system", 15)
 
 
 class Application(tk.Tk):
@@ -52,11 +52,11 @@ class StartGamePage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         title_label = tk.Label(self, text="ArmChess with Computer Vision", fg="blue", font=LARGE_FONT)
-        title_label.pack(padx=150, pady=30)
+        title_label.pack(anchor='center', pady=120)
 
-        start_button = tk.Button(self, text="Start Chess Game", font=MED_FONT,
+        start_button = tk.Button(self, text="Start Chess Game", fg="green", font=MED_FONT,
                                  command=lambda: [controller.showFrame(ChooseColorPage), controller.game.setUp()])
-        start_button.pack(pady=30)
+        start_button.pack(anchor='center', pady=100)
 
 
 class ChooseColorPage(tk.Frame):
@@ -65,17 +65,17 @@ class ChooseColorPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         color_label = tk.Label(self, text="Please choose your color", font=LARGE_FONT)
-        color_label.pack()
+        color_label.pack(pady=80)
 
-        white_button = tk.Button(self, text="White(Blue)", font=MED_FONT,
+        white_button = tk.Button(self, text="White(Blue)", font=MED_FONT, fg="white", 
                                  command=lambda: [controller.showFrame(InitializePage),
                                                   controller.game.setArmSide('Black')])
-        white_button.pack(pady=10)
+        white_button.pack(pady=80)
         black_button = tk.Button(self, text="Black(Red)", font=MED_FONT,
                                  command=lambda: [controller.showFrame(InitializePage),
                                                   controller.game.setArmSide('White'), 
                                                   controller.game.camera.flip()])
-        black_button.pack(pady=10)
+        black_button.pack(pady=50)
 
 
 class InitializePage(tk.Frame):
@@ -83,16 +83,16 @@ class InitializePage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        cali_label = tk.Label(self, text="Please set a clear board with correct direction", font=LARGE_FONT)
-        cali_label.pack(padx=10, pady=10)
+        cali_label = tk.Label(self, text="Please set a clear board\nwith correct direction", font=LARGE_FONT)
+        cali_label.pack(pady=50)
         cali_cam_button = tk.Button(self, text="View camera images to adjust board", font=MED_FONT,
                                     command=lambda: [controller.game.caliCam()])
-        cali_cam_button.pack()
+        cali_cam_button.pack(pady=80)
 
         init_board_button = tk.Button(self, text="Done", font=MED_FONT,
                                       command=lambda: [controller.showFrame(SetBoardPage),
                                                        controller.game.analyzeBoard()])
-        init_board_button.pack(pady=20)
+        init_board_button.pack(pady=50)
 
 
 class SetBoardPage(tk.Frame):
@@ -101,12 +101,12 @@ class SetBoardPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         set_board_label = tk.Label(self, text="Please set the BOARD", font=LARGE_FONT)
-        set_board_label.pack()
+        set_board_label.pack(pady=50)
 
         difficulty_button = tk.Button(self, text="Done", font=MED_FONT,
                                       command=lambda: [controller.showFrame(ChooseDifficultyPage),
                                                        controller.game.isBoardSet()])
-        difficulty_button.pack()
+        difficulty_button.pack(pady=150)
 
 
 class ChooseDifficultyPage(tk.Frame):
@@ -115,33 +115,33 @@ class ChooseDifficultyPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         choose_difficulty_label = tk.Label(self, text="Please choose difficulty", font=LARGE_FONT)
-        choose_difficulty_label.pack()
+        choose_difficulty_label.pack(pady=50)
 
         tk.Button(self, text="Easy", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()), 
-                                   controller.showFrame(EngineMovePage))]).pack()
+                                   controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Intermediate", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()), 
-                                   controller.showFrame(EngineMovePage))]).pack()
+                                   controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Hard", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()), 
-                                   controller.showFrame(EngineMovePage))]).pack()
+                                   controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Extreme", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()), 
-                                   controller.showFrame(EngineMovePage))]).pack()
+                                   controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Master", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()), 
-                                   controller.showFrame(EngineMovePage))]).pack()
+                                   controller.showFrame(EngineMovePage))]).pack(pady=10)
 
     @staticmethod
     def setEasy(controller):
@@ -175,18 +175,18 @@ class PlayerMovePage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         start_label = tk.Label(self, text="Please make your MOVE", font=LARGE_FONT)
-        start_label.pack()
+        start_label.pack(pady=50)
 
         resign_button = tk.Button(self, text="Resign", font=MED_FONT,
                                   command=lambda: [controller.showFrame(ConfirmPage)])
-        resign_button.pack()
+        resign_button.pack(pady=50)
 
         show_move_label = tk.Label(self, text="Detect your move is:", font=LARGE_FONT)
-        show_move_label.pack()
+        show_move_label.pack(pady=50)
 
         self.text = StringVar()
         player_move_label = tk.Label(self, textvariable=self.text, font=MED_FONT)
-        player_move_label.pack()
+        player_move_label.pack(pady=50)
 
         self.ctr = controller
 
@@ -228,10 +228,10 @@ class EngineMovePage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         engine_move_label = tk.Label(self, text="Engine Move:", font=LARGE_FONT)
-        engine_move_label.pack()
+        engine_move_label.pack(pady=50)
 
         move_label = tk.Label(self, textvariable=controller.move, font=MED_FONT)
-        move_label.pack()
+        move_label.pack(pady=80)
 
         self.ctr = controller
 
@@ -270,14 +270,14 @@ class ConfirmPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         confirm_label = tk.Label(self, text="Are you sure to RESIGN?", font=LARGE_FONT)
-        confirm_label.pack(pady=10, padx=10)
+        confirm_label.pack(pady=50)
 
         yes_button = tk.Button(self, text="Yes, resign", font=MED_FONT,
                                command=lambda: controller.showFrame(GameOverPage))
-        yes_button.pack()
+        yes_button.pack(pady=80)
         no_button = tk.Button(self, text="No, continue", font=MED_FONT,
                               command=lambda: controller.showFrame(PlayerMovePage))
-        no_button.pack()
+        no_button.pack(pady=50)
 
 
 class GameOverPage(tk.Frame):
@@ -286,13 +286,13 @@ class GameOverPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         over_label = tk.Label(self, text="Game over!", font=LARGE_FONT)
-        over_label.pack(padx=10, pady=10)
+        over_label.pack(pady=50)
         winner_label = tk.Label(self, textvariable=controller.winner, font=LARGE_FONT)
-        winner_label.pack(padx=10, pady=10)
+        winner_label.pack(pady=50)
 
         quit_button = tk.Button(self, text="Quit", font=MED_FONT,
                                 command=lambda: controller.destroyFrame())
-        quit_button.pack(padx=30, pady=30)
+        quit_button.pack(pady=80)
 
 
 class ChoosePromotionPage(tk.Frame):
@@ -301,7 +301,7 @@ class ChoosePromotionPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         choose_label = tk.Label(self, text="Choose your promotion", font=LARGE_FONT)
-        choose_label.pack(pady=10, padx=10)
+        choose_label.pack(pady=50)
 
         queen_button = tk.Button(self, text="Queen(Q)",
                                  command=lambda: [self.setQueen(controller)])
@@ -311,10 +311,10 @@ class ChoosePromotionPage(tk.Frame):
                                   command=lambda: [self.setBishop(controller)])
         knight_button = tk.Button(self, text="Knight(N)",
                                   command=lambda: [self.setKnight(controller)])
-        queen_button.pack()
-        rook_button.pack()
-        bishop_button.pack()
-        knight_button.pack()
+        queen_button.pack(pady=20)
+        rook_button.pack(pady=20)
+        bishop_button.pack(pady=20)
+        knight_button.pack(pady=20)
 
     @staticmethod
     def setQueen(controller):
@@ -379,9 +379,9 @@ class PlayerMoveErrorPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         error_label = tk.Label(self, text="Error! Invalid move!\nMay be caused by camera, retry in", font=LARGE_FONT)
-        error_label.pack()
+        error_label.pack(pady=50)
         self.countdown_label = tk.Label(self, text="5 s")
-        self.countdown_label.pack()
+        self.countdown_label.pack(pady=100)
 
         self.ctr = controller
 
@@ -407,10 +407,10 @@ class InCheckPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        check_label = tk.Label(self, text="You are in check!\nContinue in", font=LARGE_FONT)
-        check_label.pack()
+        check_label = tk.Label(self, text="You are in check!\nContinue in", font=LARGE_FONT, fg="red")
+        check_label.pack(pady=50)
         self.countdown_label = tk.Label(self, text="5 s")
-        self.countdown_label.pack()
+        self.countdown_label.pack(pady=100)
 
         self.ctr = controller
 
@@ -438,10 +438,10 @@ class BoardMatchErrorPage(tk.Frame):
 
         match_error_label = tk.Label(self, text="Board match error!\nMay be caused by camera, retry in",
                                      font=LARGE_FONT)
-        match_error_label.pack()
+        match_error_label.pack(pady=50)
 
         self.countdown_label = tk.Label(self, text="5 s")
-        self.countdown_label.pack()
+        self.countdown_label.pack(pady=100)
 
         self.ctr = controller
 
@@ -464,4 +464,8 @@ class BoardMatchErrorPage(tk.Frame):
 
 # Start chess game
 app = Application()
+app.title("Arm Chess")
+wnd_w = app.winfo_screenwidth()
+wnd_h = app.winfo_screenheight()
+app.geometry("%dx%d" %(wnd_w, wnd_h))
 app.mainloop()

@@ -12,6 +12,7 @@ class Camera:
         self.lock = threading.Lock()
         self.laplacian_threshold = 0
         self.flip_flag = 0
+        self.cali_cap_event = 0
 
     def cali(self):
         print("Calibration begins. Exit by press key 'Esc'.")
@@ -29,12 +30,19 @@ class Camera:
                         (255, 0, 0))
             cv2.putText(frame_copy, str(cv2.mean(frame)[0] + cv2.mean(frame)[1] + cv2.mean(frame)[2]), (100, 300),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0))
-            cv2.imshow("calibration", frame_copy)  # TODO: Figure out how to fix the position of imshow window
-            if cv2.waitKey(100) == 27 or cv2.Laplacian(frame, cv2.CV_64F).var() > 500:
+            cv2.namedWindow('calibration', 0)
+            cv2.setWindowProperty('calibration', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            cv2.setMouseCallback('calibration', self.captureEvent)
+            cv2.imshow("calibration", frame_copy)
+            if cv2.waitKey(100) ==27 or self.cali_cap_event or cv2.Laplacian(frame, cv2.CV_64F).var() > 500:
                 self.laplacian_threshold = cv2.Laplacian(frame, cv2.CV_64F).var()
                 print(self.laplacian_threshold)
                 cv2.destroyWindow("calibration")
                 break
+
+    def captureEvent(self, event, x, y, flags, params):
+        if event == cv2.EVENT_LBUTTONDBLCLK:
+            self.cali_cap_event = 1
 
     def run(self):
 
