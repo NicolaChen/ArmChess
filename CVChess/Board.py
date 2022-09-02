@@ -2,7 +2,7 @@ import math
 
 import cv2
 
-debug = True
+debug = False
 
 
 class Board:

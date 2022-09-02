@@ -97,7 +97,7 @@ class Game:
                 break
         cnt = 0
         while True:
-            # detects end of invasion， 100 times make sure
+            # detects end of invasion， 20 times make sure
             self.current = self.camera.getFrame()
             gray = cv2.cvtColor(self.current, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (17, 17), 0)
@@ -109,6 +109,8 @@ class Game:
                 cnt += 1
                 if cnt >= 20:
                     break
+            else:
+                print("Invasion exist")
         self.playerMove()
 
     def playerMove(self):
@@ -171,19 +173,19 @@ class Game:
 
     def moveChess(self):
 
-        medium = 20
-        high = 30
+        medium = 25
+        high = 40
         h0 = h1 = 10
         self.engine_latest_move = self.chess_engine.engine_move
         piece_0 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[:2])))
         piece_1 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[2:4])))
-        if piece_0 in ["K", "Q"]:
+        if piece_0.upper() in ["K", "Q"]:
             h0 = high
-        elif piece_0 in ["B", "N", "R"]:
+        elif piece_0.upper() in ["B", "N", "R"]:
             h0 = medium
-        if piece_1 in ["K", "Q"]:
+        if piece_1.upper() in ["K", "Q"]:
             h1 = high
-        elif piece_1 in ["B", "N", "R"]:
+        elif piece_1.upper() in ["B", "N", "R"]:
             h1 = medium
         if self.chess_engine.engBoard.is_en_passant(chess.Move.from_uci(self.engine_latest_move.uci())):
             self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
@@ -197,7 +199,7 @@ class Game:
                 h2 = medium
                 if piece_promo == "r":
                     promo_code = 2
-                elif piece_promo == "B":
+                elif piece_promo == "b":
                     promo_code = 3
                 else:
                     promo_code = 4

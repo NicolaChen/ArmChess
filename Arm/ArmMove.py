@@ -13,12 +13,12 @@ class ArmMove:
         self.servos = ServoMove()
         self.rot_adjust_2 = 12.7
         self.rot_adjust_3 = -10
-        self.rot_adjust_5 = -1.5
+        self.rot_adjust_5 = -5
         self.angle_adjust = [180 + 4.1 + 0.9, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
                              150 + self.rot_adjust_5, 0]
         self.ik = IK()
         self.center = [200, 0, 150]
-        self.board_matrix = np.load("./test/chess_board_matrix_new.npy")  # set None if you need to adjust board_matrix
+        self.board_matrix = np.load("./test/chess_board_matrix_V2.npy")  # set None if you need to adjust board_matrix
         self.outSpaceCnt = 0
         self.pump = Pump()
         self.armMove()
@@ -26,7 +26,7 @@ class ArmMove:
         for i in range(2):
             for j in range(8):
                 self.tomb_matrix[i][j][0] = 200 + 36 * j
-                self.tomb_matrix[i][j][1] = -180 - 30 * i
+                self.tomb_matrix[i][j][1] = -200 - 30 * i
         self.tomb_index = [0, 0]
         print("Arm initialize complete.")
 
@@ -111,13 +111,13 @@ class ArmMove:
             self.moveChess_out(arm_side, uci_move[0] + uci_move[3], self.outSpaceManagement(piece_0, None))
         elif uci_move in ['e1g1', 'e1c1', 'e8g8', 'e8c8']:
             if uci_move == 'e1g1':
-                self.moveChess_in(arm_side, 'h1f1', 20)
+                self.moveChess_in(arm_side, 'h1f1', 28)
             elif uci_move == 'e1c1':
-                self.moveChess_in(arm_side, 'a1d1', 20)
+                self.moveChess_in(arm_side, 'a1d1', 28)
             elif uci_move == 'e8g8':
-                self.moveChess_in(arm_side, 'h8f8', 20)
+                self.moveChess_in(arm_side, 'h8f8', 28)
             else:
-                self.moveChess_in(arm_side, 'a8d8', 20)
+                self.moveChess_in(arm_side, 'a8d8', 28)
         # arm return to center
         self.armMove(self.center)
 
@@ -135,18 +135,18 @@ class ArmMove:
             i1 = col.index(uci_move[2])
             j1 = eval(uci_move[3]) - 1
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 150])
-        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 50])
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 60])
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], h])
         self.pump.capture()
         time.sleep(0.8)
-        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 50])
+        self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 60])
         self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 150])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
-        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 50])
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 60])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], h])
         self.pump.release()
-        time.sleep(1.5)
-        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 50])
+        time.sleep(1.0)
+        self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 60])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
 
     def moveChess_out(self, arm_side, ori_pos, des_pos, h=10):
@@ -162,18 +162,18 @@ class ArmMove:
                 j0 = eval(ori_pos[1]) - 1
             i1, j1 = des_pos
             self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 150])
-            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 50])
+            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 60])
             self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], h])
             self.pump.capture()
             time.sleep(0.8)
-            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 50])
+            self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 60])
             self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 150])
             self.armMove([i1, j1, 150])
-            self.armMove([i1, j1, 50])
+            self.armMove([i1, j1, 60])
             self.armMove([i1, j1, h])
             self.pump.release()
-            time.sleep(1.5)
-            self.armMove([i1, j1, 50])
+            time.sleep(1.0)
+            self.armMove([i1, j1, 60])
             self.armMove([i1, j1, 150])
         else:
             i0, j0 = ori_pos
@@ -184,25 +184,25 @@ class ArmMove:
                 i1 = col.index(des_pos[0])
                 j1 = eval(des_pos[1]) - 1
             self.armMove([i0, j0, 150])
-            self.armMove([i0, j0, 50])
+            self.armMove([i0, j0, 60])
             self.armMove([i0, j0, h])
             self.pump.capture()
             time.sleep(0.8)
-            self.armMove([i0, j0, 50])
+            self.armMove([i0, j0, 60])
             self.armMove([i0, j0, 150])
             self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
-            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 50])
+            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 60])
             self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], h])
             self.pump.release()
-            time.sleep(1.5)
-            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 50])
+            time.sleep(1.0)
+            self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 60])
             self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
 
     def outSpaceManagement(self, receive_type=None, require_type=None):
         if receive_type is not None and require_type is None:
             x = self.tomb_matrix[self.tomb_index[0]][self.tomb_index[1]][0]
             y = self.tomb_matrix[self.tomb_index[0]][self.tomb_index[1]][1]
-            self.tomb_matrix[self.tomb_index[0]][self.tomb_index[1]][2] = receive_type
+            self.tomb_matrix[self.tomb_index[0]][self.tomb_index[1]][2] = self.typeTrans(receive_type.upper())
             self.tomb_index[1] += 1
             if self.tomb_index[1] > 7:
                 self.tomb_index[0] = 2
@@ -211,7 +211,11 @@ class ArmMove:
         elif receive_type is None and require_type is not None:
             for i in range(2):
                 for j in range(8):
-                    if self.tomb_matrix[i][j][2] == require_type:
+                    if self.tomb_matrix[i][j][2] == self.typeTrans(require_type.upper()):
                         return self.tomb_matrix[i][j][0], self.tomb_matrix[i][j][1]
         else:
             return 300, -240
+
+    def typeTrans(self, type):
+        type_index = ['P', 'N', 'B', 'R', 'Q']
+        return type_index.index(type)

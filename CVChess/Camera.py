@@ -11,6 +11,7 @@ class Camera:
         self.frame = None
         self.lock = threading.Lock()
         self.laplacian_threshold = 0
+        self.flip_flag = 0
 
     def cali(self):
         print("Calibration begins. Exit by press key 'Esc'.")
@@ -51,4 +52,11 @@ class Camera:
         self.lock.acquire()
         frame = self.frame
         self.lock.release()
-        return frame
+        if self.flip_flag:
+            return cv2.flip(frame, -1)
+        else:
+            return frame
+
+    def flip(self):
+        
+        self.flip_flag = 1

@@ -1,5 +1,6 @@
 import time
 import tkinter as tk
+import threading
 from tkinter import *
 
 from CVChess.Game import Game
@@ -72,7 +73,8 @@ class ChooseColorPage(tk.Frame):
         white_button.pack(pady=10)
         black_button = tk.Button(self, text="Black(Red)", font=MED_FONT,
                                  command=lambda: [controller.showFrame(InitializePage),
-                                                  controller.game.setArmSide('White')])
+                                                  controller.game.setArmSide('White'), 
+                                                  controller.game.camera.flip()])
         black_button.pack(pady=10)
 
 
@@ -118,28 +120,28 @@ class ChooseDifficultyPage(tk.Frame):
         tk.Button(self, text="Easy", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
-                                   (controller.showFrame(EngineMovePage),
-                                    controller.move.set(controller.game.chess_engine.getEngineMove()))]).pack()
+                                   (controller.move.set(controller.game.chess_engine.getEngineMove()), 
+                                   controller.showFrame(EngineMovePage))]).pack()
         tk.Button(self, text="Intermediate", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
-                                   (controller.showFrame(EngineMovePage),
-                                    controller.move.set(controller.game.chess_engine.getEngineMove()))]).pack()
+                                   (controller.move.set(controller.game.chess_engine.getEngineMove()), 
+                                   controller.showFrame(EngineMovePage))]).pack()
         tk.Button(self, text="Hard", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
-                                   (controller.showFrame(EngineMovePage),
-                                    controller.move.set(controller.game.chess_engine.getEngineMove()))]).pack()
+                                   (controller.move.set(controller.game.chess_engine.getEngineMove()), 
+                                   controller.showFrame(EngineMovePage))]).pack()
         tk.Button(self, text="Extreme", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
-                                   (controller.showFrame(EngineMovePage),
-                                    controller.move.set(controller.game.chess_engine.getEngineMove()))]).pack()
+                                   (controller.move.set(controller.game.chess_engine.getEngineMove()), 
+                                   controller.showFrame(EngineMovePage))]).pack()
         tk.Button(self, text="Master", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
-                                   (controller.showFrame(EngineMovePage),
-                                    controller.move.set(controller.game.chess_engine.getEngineMove()))]).pack()
+                                   (controller.move.set(controller.game.chess_engine.getEngineMove()), 
+                                   controller.showFrame(EngineMovePage))]).pack()
 
     @staticmethod
     def setEasy(controller):
@@ -172,7 +174,7 @@ class PlayerMovePage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        start_label = tk.Label(self, text="Chess game start! Waiting for your MOVE", font=LARGE_FONT)
+        start_label = tk.Label(self, text="Please make your MOVE", font=LARGE_FONT)
         start_label.pack()
 
         resign_button = tk.Button(self, text="Resign", font=MED_FONT,
@@ -190,7 +192,10 @@ class PlayerMovePage(tk.Frame):
 
     def run(self):
         self.text.set("Waiting for your move ...")
-        self.after(100, self.waitPlayerMove)
+        # self.after(100, self.waitPlayerMove)
+        detect_thread = threading.Thread(target=self.waitPlayerMove)
+        detect_thread.setDaemon(True)
+        detect_thread.start()
 
     def waitPlayerMove(self):
         """
@@ -232,12 +237,15 @@ class EngineMovePage(tk.Frame):
 
     def run(self):
         self.after(100, self.engineCheckBoard)
+        # detect_thread = threading.Thread(target=self.engineCheckBoard)
+        # detect_thread.setDaemon(True)
+        # detect_thread.start()
 
     def engineCheckBoard(self):
         self.ctr.game.moveChess()
         time.sleep(0.5)
         self.ctr.game.updateCurrent()
-        self.ctr.game.checkEngineMove()  # Involving Game.boardMatchError
+#        self.ctr.game.checkEngineMove()  # Involving Game.boardMatchError
 
         self.after(100, self.checkValid_E)
 
