@@ -16,11 +16,11 @@ print("Done")
 #for i in range(8):
 #    for j in range(8):
 #        if j < 4:
-#            pos_mat[i][j] = [152 + 20 + 38 * (0.5 + j), 140 - 35 * (0.5 + i)]
+#            pos_mat[i][j] = [152 + 20 + 38 * (0.5 + j), 140 - 20 * (0.5 + i)]
 #        else:
 #            pos_mat[i][j] = [152 + 20 + 41 * (0.5 + j), 140 - 37.5 * (0.5 + i)]
 
-pos_mat = np.load('chess_board_matrix_new.npy')
+pos_mat = np.load('cbm.npy')
 
 i = 0
 j = 0     
@@ -28,7 +28,7 @@ while True:
     if j == 4:
         break
     arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 150])
-    arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 35])
+    arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 20])
 #    if input("Adjust [%d, %d]\r\n" % (i, j)) == 'y':
     while True:
         dnd_in = input("Array of direction and distance, for example [0, 30]\r\n")
@@ -38,12 +38,12 @@ while True:
         pos_mat[i][j][dnd[0]] += dnd[1]
         arm.armMove([200, 0, 150])
         arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 150])
-        arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 35])
+        arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 20])
     arm.armMove([200, 0, 150])
     time.sleep(1)
 
     arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 150])
-    arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 35])
+    arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 20])
 #    if input("Adjust [%d, %d]\r\n" % (7 - i, 7 - j)) == 'y':
     while True:
         dnd_in = input("Array of direction and distance, for example [0, 30]\r\n")
@@ -53,7 +53,7 @@ while True:
         pos_mat[7 - i][7 - j][dnd[0]] += dnd[1]
         arm.armMove([200, 0, 150])
         arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 150])
-        arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 35])
+        arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 20])
     arm.armMove([200, 0, 150])
     time.sleep(1)
     if i == 7:
@@ -63,7 +63,7 @@ while True:
 
     i += 1
 
-np.save("chess_board_matrix_V2.npy", pos_mat)
+np.save("chess_board_matrix_V3.npy", pos_mat)
 
 print("Matrix saved!")
 

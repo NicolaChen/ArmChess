@@ -18,7 +18,7 @@ class ArmMove:
                              150 + self.rot_adjust_5, 0]
         self.ik = IK()
         self.center = [200, 0, 150]
-        self.board_matrix = np.load("./test/chess_board_matrix_V2.npy")  # set None if you need to adjust board_matrix
+        self.board_matrix = np.load("./test/chess_board_matrix_V3.npy")  # set None if you need to adjust board_matrix
         self.outSpaceCnt = 0
         self.pump = Pump()
         self.armMove()

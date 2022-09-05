@@ -17,7 +17,7 @@ class Game:
         self.camera = Camera()
         self.board = None
         self.board_perimeter = 0
-        self.contour_threshold = 120
+        self.contour_threshold = 50
         self.current = None
         self.previous = None
         self.engine_latest_move = None
@@ -90,7 +90,7 @@ class Game:
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (17, 17), 0)
             ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            ret2, th2 = cv2.threshold(blur, ret1 - 20, 255, cv2.THRESH_BINARY)
+            ret2, th2 = cv2.threshold(blur, ret1 , 255, cv2.THRESH_BINARY)
             max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(self.current, th2)
             if abs(self.board_perimeter - contour_perimeter) > self.contour_threshold:
                 print("Detect object invasion")
@@ -102,12 +102,12 @@ class Game:
             gray = cv2.cvtColor(self.current, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (17, 17), 0)
             ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            ret2, th2 = cv2.threshold(blur, ret1 - 20, 255, cv2.THRESH_BINARY)
+            ret2, th2 = cv2.threshold(blur, ret1 , 255, cv2.THRESH_BINARY)
             max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(self.current, th2)
             if abs(self.board_perimeter - contour_perimeter) < self.contour_threshold:
                 print("Detect invasion finish")
                 cnt += 1
-                if cnt >= 20:
+                if cnt >= 10:
                     break
             else:
                 print("Invasion exist")
@@ -173,9 +173,9 @@ class Game:
 
     def moveChess(self):
 
-        medium = 25
+        medium = 18
         high = 40
-        h0 = h1 = 10
+        h0 = h1 = 5
         self.engine_latest_move = self.chess_engine.engine_move
         piece_0 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[:2])))
         piece_1 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[2:4])))

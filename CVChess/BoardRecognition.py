@@ -43,7 +43,7 @@ class BoardRecognition:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (17, 17), 0)
         ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        ret2, th2 = cv2.threshold(blur, ret1 - 20, 255, cv2.THRESH_BINARY)
+        ret2, th2 = cv2.threshold(blur, ret1 , 255, cv2.THRESH_BINARY)
         auto_thresh = th2
 
         if debug:
@@ -168,7 +168,7 @@ class BoardRecognition:
         for c in corners:
             matching_flag = False
             for d in dedupe_corners:
-                if math.sqrt((d[0] - c[0]) * (d[0] - c[0]) + (d[1] - c[1]) * (d[1] - c[1])) < self.square_scale * 0.3:
+                if math.sqrt((d[0] - c[0]) * (d[0] - c[0]) + (d[1] - c[1]) * (d[1] - c[1])) < self.square_scale * 0.45:
                     matching_flag = True
                     break
             if not matching_flag:
