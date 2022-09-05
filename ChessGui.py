@@ -7,7 +7,7 @@ from CVChess.Game import Game
 
 LARGE_FONT = ("system", 50)
 MED_FONT = ("system", 30)
-SMALL_FONT = ("system", 15)
+SMALL_FONT = ("system", 20)
 
 
 class Application(tk.Tk):
@@ -25,10 +25,11 @@ class Application(tk.Tk):
         self.move.set("e2e4")
         self.winner = StringVar()
         self.winner.set("Engine Wins!")
+        self.error_cnt = 0
 
         for F in (StartGamePage, InitializePage, SetBoardPage, ChooseDifficultyPage, ChooseColorPage, PlayerMovePage,
                   EngineMovePage, ConfirmPage, GameOverPage, ChoosePromotionPage, PlayerMoveErrorPage, InCheckPage,
-                  BoardMatchErrorPage):
+                  BoardMatchErrorPage, UpdatePreviousPage):
             frame = F(gui, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -89,7 +90,7 @@ class InitializePage(tk.Frame):
                                     command=lambda: [controller.game.caliCam()])
         cali_cam_button.pack(pady=80)
 
-        init_board_button = tk.Button(self, text="Done", font=MED_FONT,
+        init_board_button = tk.Button(self, text="Done", font=MED_FONT, state=DISABLED
                                       command=lambda: [controller.showFrame(SetBoardPage),
                                                        controller.game.analyzeBoard()])
         init_board_button.pack(pady=50)
@@ -174,21 +175,36 @@ class PlayerMovePage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        start_label = tk.Label(self, text="Please make your MOVE", font=LARGE_FONT)
+        start_label = tk.Label(self, text="Please make your MOVE", fg="green", font=LARGE_FONT)
         start_label.pack(pady=50)
 
         resign_button = tk.Button(self, text="Resign", font=MED_FONT,
                                   command=lambda: [controller.showFrame(ConfirmPage)])
         resign_button.pack(pady=50)
 
-        show_move_label = tk.Label(self, text="Detect your move is:", font=LARGE_FONT)
-        show_move_label.pack(pady=50)
+        show_move_label = tk.Label(self, text="Detect your move is:", font=MED_FONT)
+        show_move_label.pack(pady=20)
 
         self.text = StringVar()
-        player_move_label = tk.Label(self, textvariable=self.text, font=MED_FONT)
-        player_move_label.pack(pady=50)
+        player_move_label = tk.Label(self, textvariable=self.text, font=LARGE_FONT)
+        player_move_label.pack(pady=20)
+
+        move_input_label = tk.Label(self, text="Or you can manually input your move in UCI: ", font=LARGE_FONT)
+        move_input_label.pack(pady=40)
+
+        self.input_text = tk.Text(self, height=2)
+        self.input_text.pack(pady=20)
+
+        get_input_button = tk.button(self, text="Insert", font=MED_FONT, command=lambda: [controller.insertText()])
+        get_input_button.pack(pady=20)
 
         self.ctr = controller
+
+    def insertText(self):
+        insert_text = self.input_text.get("1.0", "end-1c")
+        self.ctr.game.playerMove(insert_text)
+        self.text.set(self.ctr.game.player_move)
+        self.after(2000, self.checkValid_P)
 
     def run(self):
         self.text.set("Waiting for your move ...")
@@ -203,7 +219,7 @@ class PlayerMovePage(tk.Frame):
         """
         self.ctr.game.detectPlayerMove()
         self.text.set(self.ctr.game.player_move)
-        self.after(3000, self.checkValid_P)
+        self.after(2000, self.checkValid_P)
 
     def checkValid_P(self):
         """
@@ -215,8 +231,12 @@ class PlayerMovePage(tk.Frame):
         elif self.ctr.game.board.promo:
             self.ctr.showFrame(ChoosePromotionPage)
         elif self.ctr.game.player_move_error:
-            self.ctr.game.current = self.ctr.game.previous
-            self.ctr.showFrame(PlayerMoveErrorPage)
+            if self.error_cnt > 2:
+                self.ctr.game.current = self.ctr.game.previous
+                self.ctr.showFrame(UpdatePreviousPage)
+            else:
+                self.ctr.game.current = self.ctr.game.previous
+                self.ctr.showFrame(PlayerMoveErrorPage)
         else:
             self.ctr.move.set(self.ctr.game.chess_engine.getEngineMove())
             self.ctr.showFrame(EngineMovePage)
@@ -227,11 +247,11 @@ class EngineMovePage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        engine_move_label = tk.Label(self, text="Engine Move:", font=LARGE_FONT)
-        engine_move_label.pack(pady=50)
+        engine_move_label = tk.Label(self, text="Engine Move:", fg="red", font=MED_FONT)
+        engine_move_label.pack(pady=80)
 
-        move_label = tk.Label(self, textvariable=controller.move, font=MED_FONT)
-        move_label.pack(pady=80)
+        move_label = tk.Label(self, textvariable=controller.move, fg="red", font=LARGE_FONT)
+        move_label.pack(pady=50)
 
         self.ctr = controller
 
@@ -380,12 +400,13 @@ class PlayerMoveErrorPage(tk.Frame):
 
         error_label = tk.Label(self, text="Error! Invalid move!\nMay be caused by camera, retry in", font=LARGE_FONT)
         error_label.pack(pady=50)
-        self.countdown_label = tk.Label(self, text="5 s")
+        self.countdown_label = tk.Label(self, text="5 s", font=SMALL_FONT)
         self.countdown_label.pack(pady=100)
 
         self.ctr = controller
 
     def run(self):
+        self.error_cnt += 1
         self.countdown_label["text"] = "5 s"
         self.after(1000, self.countdown, 5)
 
@@ -409,7 +430,7 @@ class InCheckPage(tk.Frame):
 
         check_label = tk.Label(self, text="You are in check!\nContinue in", font=LARGE_FONT, fg="red")
         check_label.pack(pady=50)
-        self.countdown_label = tk.Label(self, text="5 s")
+        self.countdown_label = tk.Label(self, text="5 s", font=SMALL_FONT)
         self.countdown_label.pack(pady=100)
 
         self.ctr = controller
@@ -440,7 +461,7 @@ class BoardMatchErrorPage(tk.Frame):
                                      font=LARGE_FONT)
         match_error_label.pack(pady=50)
 
-        self.countdown_label = tk.Label(self, text="5 s")
+        self.countdown_label = tk.Label(self, text="5 s", font=SMALL_FONT)
         self.countdown_label.pack(pady=100)
 
         self.ctr = controller
@@ -460,6 +481,21 @@ class BoardMatchErrorPage(tk.Frame):
             self.after_cancel(clock)
             self.countdown_label["text"] = "0"
             self.ctr.showFrame(EngineMovePage)
+
+
+class UpdatePreviousPage(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        errors_label = tk.Label(self, text="Sorry for another error", fg="red", font=LARGE_FONT)
+        error_label.pack(pady=50)
+        suggest_label = tk.Label(self, text="You can NOW reset your latest move, and press:", font=MED_FONT)
+        suggest_label.pack(pady=80)
+
+        adjust_button = tk.Button(self, text="Let camera take a new image", font=MED_FONT,
+                                command=lambda: [controller.game.updatePrevious(), controller.showFrame(PlayerMovePage)])
+        adjust_button.pack(pady=40)
 
 
 # Start chess game
