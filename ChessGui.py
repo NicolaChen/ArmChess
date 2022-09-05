@@ -1,6 +1,6 @@
+import threading
 import time
 import tkinter as tk
-import threading
 from tkinter import *
 
 from CVChess.Game import Game
@@ -68,13 +68,13 @@ class ChooseColorPage(tk.Frame):
         color_label = tk.Label(self, text="Please choose your color", font=LARGE_FONT)
         color_label.pack(pady=80)
 
-        white_button = tk.Button(self, text="White(Blue)", font=MED_FONT, fg="white", 
+        white_button = tk.Button(self, text="White(Blue)", font=MED_FONT, fg="white",
                                  command=lambda: [controller.showFrame(InitializePage),
                                                   controller.game.setArmSide('Black')])
         white_button.pack(pady=80)
         black_button = tk.Button(self, text="Black(Red)", font=MED_FONT,
                                  command=lambda: [controller.showFrame(InitializePage),
-                                                  controller.game.setArmSide('White'), 
+                                                  controller.game.setArmSide('White'),
                                                   controller.game.camera.flip()])
         black_button.pack(pady=50)
 
@@ -90,7 +90,7 @@ class InitializePage(tk.Frame):
                                     command=lambda: [controller.game.caliCam()])
         cali_cam_button.pack(pady=80)
 
-        init_board_button = tk.Button(self, text="Done", font=MED_FONT, state=DISABLED
+        init_board_button = tk.Button(self, text="Done", font=MED_FONT,
                                       command=lambda: [controller.showFrame(SetBoardPage),
                                                        controller.game.analyzeBoard()])
         init_board_button.pack(pady=50)
@@ -121,28 +121,28 @@ class ChooseDifficultyPage(tk.Frame):
         tk.Button(self, text="Easy", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
-                                   (controller.move.set(controller.game.chess_engine.getEngineMove()), 
-                                   controller.showFrame(EngineMovePage))]).pack(pady=10)
+                                   (controller.move.set(controller.game.chess_engine.getEngineMove()),
+                                    controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Intermediate", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
-                                   (controller.move.set(controller.game.chess_engine.getEngineMove()), 
-                                   controller.showFrame(EngineMovePage))]).pack(pady=10)
+                                   (controller.move.set(controller.game.chess_engine.getEngineMove()),
+                                    controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Hard", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
-                                   (controller.move.set(controller.game.chess_engine.getEngineMove()), 
-                                   controller.showFrame(EngineMovePage))]).pack(pady=10)
+                                   (controller.move.set(controller.game.chess_engine.getEngineMove()),
+                                    controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Extreme", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
-                                   (controller.move.set(controller.game.chess_engine.getEngineMove()), 
-                                   controller.showFrame(EngineMovePage))]).pack(pady=10)
+                                   (controller.move.set(controller.game.chess_engine.getEngineMove()),
+                                    controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Master", font=MED_FONT,
                   command=lambda: [self.setEasy(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
-                                   (controller.move.set(controller.game.chess_engine.getEngineMove()), 
-                                   controller.showFrame(EngineMovePage))]).pack(pady=10)
+                                   (controller.move.set(controller.game.chess_engine.getEngineMove()),
+                                    controller.showFrame(EngineMovePage))]).pack(pady=10)
 
     @staticmethod
     def setEasy(controller):
@@ -195,7 +195,7 @@ class PlayerMovePage(tk.Frame):
         self.input_text = tk.Text(self, height=2)
         self.input_text.pack(pady=20)
 
-        get_input_button = tk.button(self, text="Insert", font=MED_FONT, command=lambda: [controller.insertText()])
+        get_input_button = tk.Button(self, text="Insert", font=MED_FONT, command=lambda: [controller.insertText()])
         get_input_button.pack(pady=20)
 
         self.ctr = controller
@@ -231,8 +231,9 @@ class PlayerMovePage(tk.Frame):
         elif self.ctr.game.board.promo:
             self.ctr.showFrame(ChoosePromotionPage)
         elif self.ctr.game.player_move_error:
-            if self.error_cnt > 2:
+            if self.ctr.error_cnt > 2:
                 self.ctr.game.current = self.ctr.game.previous
+
                 self.ctr.showFrame(UpdatePreviousPage)
             else:
                 self.ctr.game.current = self.ctr.game.previous
@@ -265,7 +266,7 @@ class EngineMovePage(tk.Frame):
         self.ctr.game.moveChess()
         time.sleep(0.5)
         self.ctr.game.updateCurrent()
-#        self.ctr.game.checkEngineMove()  # Involving Game.boardMatchError
+        #        self.ctr.game.checkEngineMove()  # Involving Game.boardMatchError
 
         self.after(100, self.checkValid_E)
 
@@ -406,7 +407,7 @@ class PlayerMoveErrorPage(tk.Frame):
         self.ctr = controller
 
     def run(self):
-        self.error_cnt += 1
+        self.ctr.error_cnt += 1
         self.countdown_label["text"] = "5 s"
         self.after(1000, self.countdown, 5)
 
@@ -488,13 +489,14 @@ class UpdatePreviousPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        errors_label = tk.Label(self, text="Sorry for another error", fg="red", font=LARGE_FONT)
+        error_label = tk.Label(self, text="Sorry for another error", fg="red", font=LARGE_FONT)
         error_label.pack(pady=50)
         suggest_label = tk.Label(self, text="You can NOW reset your latest move, and press:", font=MED_FONT)
         suggest_label.pack(pady=80)
 
         adjust_button = tk.Button(self, text="Let camera take a new image", font=MED_FONT,
-                                command=lambda: [controller.game.updatePrevious(), controller.showFrame(PlayerMovePage)])
+                                  command=lambda: [controller.game.updatePrevious(),
+                                                   controller.showFrame(PlayerMovePage)])
         adjust_button.pack(pady=40)
 
 
@@ -503,5 +505,5 @@ app = Application()
 app.title("Arm Chess")
 wnd_w = app.winfo_screenwidth()
 wnd_h = app.winfo_screenheight()
-app.geometry("%dx%d" %(wnd_w, wnd_h))
+app.geometry("%dx%d" % (wnd_w, wnd_h))
 app.mainloop()
