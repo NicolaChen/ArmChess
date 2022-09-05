@@ -20,7 +20,7 @@ print("Done")
 #        else:
 #            pos_mat[i][j] = [152 + 20 + 41 * (0.5 + j), 140 - 37.5 * (0.5 + i)]
 
-pos_mat = np.load('cbm.npy')
+pos_mat = np.load('chess_board_matrix_V3.npy')
 
 i = 0
 j = 0     
@@ -63,7 +63,7 @@ while True:
 
     i += 1
 
-np.save("chess_board_matrix_V3.npy", pos_mat)
+np.save("chess_board_matrix_V5.npy", pos_mat)
 
 print("Matrix saved!")
 
