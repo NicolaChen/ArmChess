@@ -113,11 +113,14 @@ class Game:
                 print("Invasion exist")
         self.playerMove()
 
-    def playerMove(self):
+    def playerMove(self, insert_move=None):
         """
         Finds difference between previous and current, deduces player's move and updates move to engine
         """
-        self.player_move = self.board.determineChanges(self.previous, self.current)
+        if insert_move is None:
+            self.player_move = self.board.determineChanges(self.previous, self.current)
+        else:
+            self.player_move = insert_move
         code = self.chess_engine.updateMove(self.player_move)
         if code == 1:
             # illegal move prompt GUI to open Player Move Error Page
@@ -173,7 +176,7 @@ class Game:
 
     def moveChess(self):
 
-        medium = 18
+        medium = 15
         high = 40
         h0 = h1 = 5
         self.engine_latest_move = self.chess_engine.engine_move
@@ -214,3 +217,14 @@ class Game:
         else:
             self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
                                   piece_0, piece_1, 0, 0, 0, h0)
+
+    def updatePrevious(self):
+        '''
+        Update previous frame in case identify errors caused by unexpected moves
+        '''
+        while True:
+            frame = self.camera.getFrame()
+            if abs(cv2.Laplacian(frame, cv2.CV_64F).var() - self.camera.laplacian_threshold) < 50:
+                break
+        print("Update previous frame success.")
+        self.current = frame

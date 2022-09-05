@@ -13,7 +13,7 @@ class ArmMove:
         self.servos = ServoMove()
         self.rot_adjust_2 = 12.7
         self.rot_adjust_3 = -10
-        self.rot_adjust_5 = -5
+        self.rot_adjust_5 = -2
         self.angle_adjust = [180 + 4.1 + 0.9, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
                              150 + self.rot_adjust_5, 0]
         self.ik = IK()

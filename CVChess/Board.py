@@ -80,7 +80,6 @@ class Board:
                 second_largest_dist = distance
                 second_largest_square = sq
 
-        # TODO: add new detect for PAWN special: en passant, current code can only infer from attacking side's move
         if len(state_change) >= 4:
             # if four square have color change in a single move, castling took place
             square_one = state_change[0]
