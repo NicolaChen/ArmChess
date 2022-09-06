@@ -1,7 +1,5 @@
-import ctypes
 import threading
 import time
-import sys
 import tkinter as tk
 from tkinter import *
 
@@ -46,8 +44,8 @@ class Application(tk.Tk):
 
     def destroyFrame(self):
         self.game.camera.stop_cam_flag = True
+        self.game.chess_engine.engine.close()
         app.destroy()
-        pass  # TODO: Figure out how to kill the program
 
 
 # TODO: Adjust every label and button pack
@@ -199,7 +197,8 @@ class PlayerMovePage(tk.Frame):
         self.input_text = tk.Text(self, height=2)
         self.input_text.pack(pady=20)
 
-        get_input_button = tk.Button(self, text="Insert", font=MED_FONT, command=lambda: [self.stopThread(), self.insertText()])
+        get_input_button = tk.Button(self, text="Insert", font=MED_FONT, 
+                                     command=lambda: [self.stopThread(), self.insertText()])
         get_input_button.pack(pady=20)
 
         self.ctr = controller
@@ -518,4 +517,5 @@ app.title("Arm Chess")
 wnd_w = app.winfo_screenwidth()
 wnd_h = app.winfo_screenheight()
 app.geometry("%dx%d" % (wnd_w, wnd_h))
+app.protocol("WM_DELETE_WINDOW", app.destroyFrame)
 app.mainloop()

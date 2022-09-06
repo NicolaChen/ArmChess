@@ -112,7 +112,7 @@ class Game:
             gray = cv2.cvtColor(self.current, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (17, 17), 0)
             ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            ret2, th2 = cv2.threshold(blur, ret1 , 255, cv2.THRESH_BINARY)
+            ret2, th2 = cv2.threshold(blur, ret1, 255, cv2.THRESH_BINARY)
             max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(self.current, th2)
             if self.stop_detect_flag:
                 print("STOP DETECT")
@@ -233,9 +233,9 @@ class Game:
                                   piece_0, piece_1, 0, 0, 0, h0)
 
     def updatePrevious(self):
-        '''
+        """
         Update previous frame in case identify errors caused by unexpected moves
-        '''
+        """
         while True:
             frame = self.camera.getFrame()
             if abs(cv2.Laplacian(frame, cv2.CV_64F).var() - self.camera.laplacian_threshold) < 50:

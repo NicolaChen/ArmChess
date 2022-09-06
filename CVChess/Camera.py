@@ -35,7 +35,7 @@ class Camera:
             cv2.setWindowProperty('calibration', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
             cv2.setMouseCallback('calibration', self.captureEvent)
             cv2.imshow("calibration", frame_copy)
-            if cv2.waitKey(100) ==27 or self.cali_cap_event or cv2.Laplacian(frame, cv2.CV_64F).var() > 500:
+            if cv2.waitKey(100) == 27 or self.cali_cap_event or cv2.Laplacian(frame, cv2.CV_64F).var() > 500:
                 self.laplacian_threshold = cv2.Laplacian(frame, cv2.CV_64F).var()
                 print(self.laplacian_threshold)
                 cv2.destroyWindow("calibration")
