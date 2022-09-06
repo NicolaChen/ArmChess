@@ -19,9 +19,15 @@ class Square:
         self.contour = np.array([c1, c2, c4, c3], dtype=np.int32)
 
         # Center of square
+        self.error_flag = False
         m = cv2.moments(self.contour)
-        cx, cy = int(m['m10'] / m['m00']), int(m['m01'] / m['m00'])
-
+        try:
+            cx, cy = int(m['m10'] / m['m00']), int(m['m01'] / m['m00'])
+        except ZeroDivisionError:
+            cx = 0
+            cy = 0
+            self.error_flag = True
+            
         # ROI for image differencing
         self.roi = (cx, cy)
         self.radius = int(scale * 0.3)

@@ -1,5 +1,7 @@
+import ctypes
 import threading
 import time
+import sys
 import tkinter as tk
 from tkinter import *
 
@@ -43,6 +45,8 @@ class Application(tk.Tk):
             frame.run()
 
     def destroyFrame(self):
+        self.game.camera.stop_cam_flag = True
+        app.destroy()
         pass  # TODO: Figure out how to kill the program
 
 
@@ -70,12 +74,12 @@ class ChooseColorPage(tk.Frame):
 
         white_button = tk.Button(self, text="White(Blue)", font=MED_FONT, fg="white",
                                  command=lambda: [controller.showFrame(InitializePage),
-                                                  controller.game.setArmSide('Black')])
+                                                  controller.game.setArmSide('Black'),
+                                                  controller.game.camera.flip()])
         white_button.pack(pady=80)
         black_button = tk.Button(self, text="Black(Red)", font=MED_FONT,
                                  command=lambda: [controller.showFrame(InitializePage),
-                                                  controller.game.setArmSide('White'),
-                                                  controller.game.camera.flip()])
+                                                  controller.game.setArmSide('White')])
         black_button.pack(pady=50)
 
 
@@ -179,7 +183,7 @@ class PlayerMovePage(tk.Frame):
         start_label.pack(pady=50)
 
         resign_button = tk.Button(self, text="Resign", font=MED_FONT,
-                                  command=lambda: [controller.showFrame(ConfirmPage)])
+                                  command=lambda: [self.stopThread(), controller.showFrame(ConfirmPage)])
         resign_button.pack(pady=50)
 
         show_move_label = tk.Label(self, text="Detect your move is:", font=MED_FONT)
@@ -195,29 +199,37 @@ class PlayerMovePage(tk.Frame):
         self.input_text = tk.Text(self, height=2)
         self.input_text.pack(pady=20)
 
-        get_input_button = tk.Button(self, text="Insert", font=MED_FONT, command=lambda: [controller.insertText()])
+        get_input_button = tk.Button(self, text="Insert", font=MED_FONT, command=lambda: [self.stopThread(), self.insertText()])
         get_input_button.pack(pady=20)
 
         self.ctr = controller
+        self.detect_thread = None
+
+    def stopThread(self):
+        self.ctr.game.stop_detect_flag = True
 
     def insertText(self):
         insert_text = self.input_text.get("1.0", "end-1c")
+        self.input_text.delete("1.0", "end")
         self.ctr.game.playerMove(insert_text)
         self.text.set(self.ctr.game.player_move)
         self.after(2000, self.checkValid_P)
 
     def run(self):
+        self.ctr.game.stop_detect_flag = False
         self.text.set("Waiting for your move ...")
         # self.after(100, self.waitPlayerMove)
-        detect_thread = threading.Thread(target=self.waitPlayerMove)
-        detect_thread.setDaemon(True)
-        detect_thread.start()
+        self.detect_thread = threading.Thread(target=self.waitPlayerMove)
+        self.detect_thread.setDaemon(True)
+        self.detect_thread.start()
 
     def waitPlayerMove(self):
         """
         Detect player's move and show in label, then check the game
         """
-        self.ctr.game.detectPlayerMove()
+        res = self.ctr.game.detectPlayerMove()
+        if res == 0:
+            return 0
         self.text.set(self.ctr.game.player_move)
         self.after(2000, self.checkValid_P)
 

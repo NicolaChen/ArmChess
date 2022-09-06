@@ -13,6 +13,7 @@ class Camera:
         self.laplacian_threshold = 0
         self.flip_flag = 0
         self.cali_cap_event = 0
+        self.stop_cam_flag = False
 
     def cali(self):
         print("Calibration begins. Exit by press key 'Esc'.")
@@ -53,6 +54,9 @@ class Camera:
             size = (int(scale * frame.shape[1]), int(scale * frame.shape[0]))
             self.frame = cv2.resize(frame, size)
             self.lock.release()
+            if self.stop_cam_flag:
+                print("Camera stops")
+                break
             time.sleep(0.1)
 
     def getFrame(self):

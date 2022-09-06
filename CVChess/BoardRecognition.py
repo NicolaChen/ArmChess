@@ -17,6 +17,7 @@ class BoardRecognition:
         self.square_scale = 50
         self.image = None
         self.contour_perimeter = 0
+        self.recog_fail_flag = False
 
     def initializeBoard(self):
         corners = []
@@ -212,6 +213,8 @@ class BoardRecognition:
 
                 position = letters[r] + numbers[7 - c]
                 new_squares = Square(color_edges, c1, c2, c3, c4, position, self.square_scale)
+                if new_squares.error_flag:
+                    self.recog_fail_flag = True
                 new_squares.draw(color_edges, (0, 0, 255), 3)
                 new_squares.drawROI(color_edges, (255, 0, 0), 2)
                 new_squares.classify(color_edges)

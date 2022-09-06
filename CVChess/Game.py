@@ -30,6 +30,7 @@ class Game:
         self.board_match_error = False
         self.arm = ArmMove()
         self.arm_side = "Unknown"
+        self.stop_detect_flag = False
 
     def setUp(self):
         """
@@ -55,7 +56,12 @@ class Game:
         Finds chessboard squares and assigns their states
         """
         board_recognize = BoardRecognition(self.camera)
-        self.board = board_recognize.initializeBoard()
+        while True:
+            self.board = board_recognize.initializeBoard()
+            if not board_recognize.recog_fail_flag:
+                break
+            else:
+                print("Board recognize fail,try again...")
         self.board.assignState()
         self.board_perimeter = board_recognize.contour_perimeter
 
@@ -90,8 +96,12 @@ class Game:
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (17, 17), 0)
             ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            ret2, th2 = cv2.threshold(blur, ret1 , 255, cv2.THRESH_BINARY)
+            ret2, th2 = cv2.threshold(blur, ret1, 255, cv2.THRESH_BINARY)
             max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(self.current, th2)
+            if self.stop_detect_flag:
+                print("STOP DETECT")
+                self.stop_detect_flag = True
+                return 0
             if abs(self.board_perimeter - contour_perimeter) > self.contour_threshold:
                 print("Detect object invasion")
                 break
@@ -104,6 +114,10 @@ class Game:
             ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
             ret2, th2 = cv2.threshold(blur, ret1 , 255, cv2.THRESH_BINARY)
             max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(self.current, th2)
+            if self.stop_detect_flag:
+                print("STOP DETECT")
+                self.stop_detect_flag = True
+                return 0
             if abs(self.board_perimeter - contour_perimeter) < self.contour_threshold:
                 print("Detect invasion finish")
                 cnt += 1
