@@ -17,7 +17,7 @@ class Game:
         self.camera = Camera()
         self.board = None
         self.board_perimeter = 0
-        self.contour_threshold = 50
+        self.contour_threshold = 200
         self.current = None
         self.previous = None
         self.engine_latest_move = None
@@ -31,6 +31,7 @@ class Game:
         self.arm = ArmMove()
         self.arm_side = "Unknown"
         self.stop_detect_flag = False
+        self.threshold_adjust = 18
 
     def setUp(self):
         """
@@ -57,8 +58,8 @@ class Game:
         """
         board_recognize = BoardRecognition(self.camera)
         while True:
-            self.board = board_recognize.initializeBoard()
-            if not board_recognize.recog_fail_flag:
+            self.board = board_recognize.initializeBoard(self.threshold_adjust)
+            if not board_recognize.recog_fail_flag and self.board:
                 break
             else:
                 print("Board recognize fail,try again...")
@@ -72,7 +73,7 @@ class Game:
         time.sleep(2)  # Give camera some time to focus, can be dismissed
         while True:
             self.current = self.camera.getFrame()
-            if abs(cv2.Laplacian(self.current, cv2.CV_64F).var() - self.camera.laplacian_threshold) < 100:
+            if abs(cv2.Laplacian(self.current, cv2.CV_64F).var() - self.camera.laplacian_threshold) < 80:
                 break
 
     def engineMove(self):
@@ -96,7 +97,7 @@ class Game:
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (17, 17), 0)
             ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            ret2, th2 = cv2.threshold(blur, ret1, 255, cv2.THRESH_BINARY)
+            ret2, th2 = cv2.threshold(blur, ret1+self.threshold_adjust, 255, cv2.THRESH_BINARY)
             max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(self.current, th2)
             if self.stop_detect_flag:
                 print("STOP DETECT")
@@ -107,12 +108,12 @@ class Game:
                 break
         cnt = 0
         while True:
-            # detects end of invasion， 20 times make sure
+            # detects end of invasion， 10 times make sure
             self.current = self.camera.getFrame()
             gray = cv2.cvtColor(self.current, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (17, 17), 0)
             ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            ret2, th2 = cv2.threshold(blur, ret1, 255, cv2.THRESH_BINARY)
+            ret2, th2 = cv2.threshold(blur, ret1+self.threshold_adjust, 255, cv2.THRESH_BINARY)
             max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(self.current, th2)
             if self.stop_detect_flag:
                 print("STOP DETECT")
@@ -152,9 +153,9 @@ class Game:
 
     def updateCurrent(self):
         self.previous = self.current
-        for i in range(30):
+        for i in range(10):
             self.current = self.camera.getFrame()
-            if abs(cv2.Laplacian(self.current, cv2.CV_64F).var() - self.camera.laplacian_threshold) < 50:
+            if abs(cv2.Laplacian(self.current, cv2.CV_64F).var() - self.camera.laplacian_threshold) < 80:
                 break
 
     def checkEngineMove(self):
@@ -191,7 +192,7 @@ class Game:
     def moveChess(self):
 
         medium = 15
-        high = 40
+        high = 30
         h0 = h1 = 5
         self.engine_latest_move = self.chess_engine.engine_move
         piece_0 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[:2])))
@@ -236,7 +237,7 @@ class Game:
         """
         Update previous frame in case identify errors caused by unexpected moves
         """
-        while True:
+        for _ in range(20):
             frame = self.camera.getFrame()
             if abs(cv2.Laplacian(frame, cv2.CV_64F).var() - self.camera.laplacian_threshold) < 50:
                 break

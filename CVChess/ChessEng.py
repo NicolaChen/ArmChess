@@ -8,7 +8,7 @@ class ChessEng:
 
         self.engBoard = chess.Board()
         self.engine = chess.engine.SimpleEngine.popen_uci("CVChess/Stockfish-sf_15/src/stockfish")
-        self.time = 0.1
+        self.time = 15
         self.engine_move = None
         print(self.engBoard)
 
@@ -26,7 +26,7 @@ class ChessEng:
 
     def getEngineMove(self):
 
-        self.engine_move = self.engine.play(self.engBoard, chess.engine.Limit(time=self.time)).move
+        self.engine_move = self.engine.play(self.engBoard, chess.engine.Limit(time=self.time, depth=50)).move
         return self.engine_move
 
     def feedToEngine(self):

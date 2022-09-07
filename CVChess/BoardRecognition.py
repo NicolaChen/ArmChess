@@ -19,7 +19,7 @@ class BoardRecognition:
         self.contour_perimeter = 0
         self.recog_fail_flag = False
 
-    def initializeBoard(self):
+    def initializeBoard(self, threshold_adjust=10):
         corners = []
         while len(corners) < 121:
             while True:
@@ -27,7 +27,7 @@ class BoardRecognition:
                 print(cv2.Laplacian(self.image, cv2.CV_64F).var())
                 if abs(cv2.Laplacian(self.image, cv2.CV_64F).var() - self.cam.laplacian_threshold) < 100:
                     break
-            thresh_image = self.cleanImage(self.image)
+            thresh_image = self.cleanImage(self.image, threshold_adjust)
             max_contour, self.square_scale, self.contour_perimeter = self.getContour(self.image, thresh_image)
             mask_image = self.initializeMask(max_contour)
             edges, color_edges = self.findEdges(mask_image)
@@ -40,11 +40,11 @@ class BoardRecognition:
         return board
 
     @staticmethod
-    def cleanImage(image):
+    def cleanImage(image, threshold_adjust=10):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (17, 17), 0)
         ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        ret2, th2 = cv2.threshold(blur, ret1 , 255, cv2.THRESH_BINARY)
+        ret2, th2 = cv2.threshold(blur, ret1+threshold_adjust, 255, cv2.THRESH_BINARY)
         auto_thresh = th2
 
         if debug:
@@ -104,7 +104,7 @@ class BoardRecognition:
 
     @staticmethod
     def findEdges(mask_image):
-        edges = cv2.Canny(mask_image, 60, 100, None, 3)
+        edges = cv2.Canny(mask_image, 80, 100, None, 3)
 
         if debug:
             # Show image with edges drawn
@@ -134,7 +134,7 @@ class BoardRecognition:
         return rot_img, rot_bgr
 
     def findLines(self, edges, color_edges):
-        lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 100, np.array([]), self.square_scale * 2, self.square_scale * 3)
+        lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 100, np.array([]), self.square_scale * 4, self.square_scale * 3)
         a, b, c = lines.shape
         for i in range(a):
             cv2.line(color_edges, (lines[i][0][0], lines[i][0][1]), (lines[i][0][2], lines[i][0][3]), (0, 255, 0), 2,
@@ -169,7 +169,7 @@ class BoardRecognition:
         for c in corners:
             matching_flag = False
             for d in dedupe_corners:
-                if math.sqrt((d[0] - c[0]) * (d[0] - c[0]) + (d[1] - c[1]) * (d[1] - c[1])) < self.square_scale * 0.45:
+                if math.sqrt((d[0] - c[0]) * (d[0] - c[0]) + (d[1] - c[1]) * (d[1] - c[1])) < self.square_scale * 0.3:
                     matching_flag = True
                     break
             if not matching_flag:

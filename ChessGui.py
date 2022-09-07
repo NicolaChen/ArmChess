@@ -126,50 +126,50 @@ class ChooseDifficultyPage(tk.Frame):
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()),
                                     controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Intermediate", font=MED_FONT,
-                  command=lambda: [self.setEasy(controller),
+                  command=lambda: [self.setIntermediate(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()),
                                     controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Hard", font=MED_FONT,
-                  command=lambda: [self.setEasy(controller),
+                  command=lambda: [self.setHard(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()),
                                     controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Extreme", font=MED_FONT,
-                  command=lambda: [self.setEasy(controller),
+                  command=lambda: [self.setExtreme(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()),
                                     controller.showFrame(EngineMovePage))]).pack(pady=10)
         tk.Button(self, text="Master", font=MED_FONT,
-                  command=lambda: [self.setEasy(controller),
+                  command=lambda: [self.setMaster(controller),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()),
                                     controller.showFrame(EngineMovePage))]).pack(pady=10)
 
     @staticmethod
     def setEasy(controller):
-        controller.game.chess_engine.engine.configure({"Skill Level": 0})
-        controller.game.chess_engine.time = 0.01
-
-    @staticmethod
-    def setIntermediate(controller):
-        controller.game.chess_engine.engine.configure({"Skill Level": 5})
-        controller.game.chess_engine.time = 0.1
-
-    @staticmethod
-    def setHard(controller):
-        controller.game.chess_engine.engine.configure({"Skill Level": 10})
+        controller.game.chess_engine.engine.configure({"Skill Level": 0, "Hash": 64})
         controller.game.chess_engine.time = 1
 
     @staticmethod
-    def setExtreme(controller):
-        controller.game.chess_engine.engine.configure({"Skill Level": 15})
+    def setIntermediate(controller):
+        controller.game.chess_engine.engine.configure({"Skill Level": 5, "Hash": 128})
         controller.game.chess_engine.time = 3
 
     @staticmethod
-    def setMaster(controller):
-        controller.game.chess_engine.engine.configure({"Skill Level": 20})
+    def setHard(controller):
+        controller.game.chess_engine.engine.configure({"Skill Level": 10, "Hash": 512})
         controller.game.chess_engine.time = 5
+
+    @staticmethod
+    def setExtreme(controller):
+        controller.game.chess_engine.engine.configure({"Skill Level": 15, "Hash": 1024})
+        controller.game.chess_engine.time = 10
+
+    @staticmethod
+    def setMaster(controller):
+        controller.game.chess_engine.engine.configure({"Skill Level": 20, "Hash": 2048})
+        controller.game.chess_engine.time = 20
 
 
 class PlayerMovePage(tk.Frame):
@@ -242,7 +242,7 @@ class PlayerMovePage(tk.Frame):
         elif self.ctr.game.board.promo:
             self.ctr.showFrame(ChoosePromotionPage)
         elif self.ctr.game.player_move_error:
-            if self.ctr.error_cnt > 2:
+            if self.ctr.error_cnt > 1:
                 self.ctr.game.current = self.ctr.game.previous
 
                 self.ctr.showFrame(UpdatePreviousPage)
@@ -502,13 +502,18 @@ class UpdatePreviousPage(tk.Frame):
 
         error_label = tk.Label(self, text="Sorry for another error", fg="red", font=LARGE_FONT)
         error_label.pack(pady=50)
-        suggest_label = tk.Label(self, text="You can NOW reset your latest move, and press:", font=MED_FONT)
-        suggest_label.pack(pady=80)
+
+        retry_button = tk.Button(self, text="Try again!", font=MED_FONT,
+                                  command=lambda: [controller.showFrame(PlayerMovePage)])
+        retry_button.pack(pady=30)
+
+        suggest_label = tk.Label(self, text="Or you can NOW reset your latest move, and press:", font=MED_FONT)
+        suggest_label.pack(pady=40)
 
         adjust_button = tk.Button(self, text="Let camera take a new image", font=MED_FONT,
                                   command=lambda: [controller.game.updatePrevious(),
                                                    controller.showFrame(PlayerMovePage)])
-        adjust_button.pack(pady=40)
+        adjust_button.pack(pady=20)
 
 
 # Start chess game

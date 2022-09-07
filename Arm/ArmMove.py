@@ -26,7 +26,7 @@ class ArmMove:
         for i in range(2):
             for j in range(8):
                 self.tomb_matrix[i][j][0] = 200 + 36 * j
-                self.tomb_matrix[i][j][1] = -200 - 30 * i
+                self.tomb_matrix[i][j][1] = 220 + 30 * i
         self.tomb_index = [0, 0]
         print("Arm initialize complete.")
 
@@ -111,17 +111,17 @@ class ArmMove:
             self.moveChess_out(arm_side, uci_move[0] + uci_move[3], self.outSpaceManagement(piece_0, None))
         elif uci_move in ['e1g1', 'e1c1', 'e8g8', 'e8c8']:
             if uci_move == 'e1g1':
-                self.moveChess_in(arm_side, 'h1f1', 28)
+                self.moveChess_in(arm_side, 'h1f1', 15)
             elif uci_move == 'e1c1':
-                self.moveChess_in(arm_side, 'a1d1', 28)
+                self.moveChess_in(arm_side, 'a1d1', 15)
             elif uci_move == 'e8g8':
-                self.moveChess_in(arm_side, 'h8f8', 28)
+                self.moveChess_in(arm_side, 'h8f8', 15)
             else:
-                self.moveChess_in(arm_side, 'a8d8', 28)
+                self.moveChess_in(arm_side, 'a8d8', 15)
         # arm return to center
         self.armMove(self.center)
 
-    def moveChess_in(self, arm_side, uci_move, h=10):
+    def moveChess_in(self, arm_side, uci_move, h=5):
 
         col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
         if arm_side == 'Black':
@@ -149,7 +149,7 @@ class ArmMove:
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 60])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
 
-    def moveChess_out(self, arm_side, ori_pos, des_pos, h=10):
+    def moveChess_out(self, arm_side, ori_pos, des_pos, h=5):
 
         col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
