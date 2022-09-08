@@ -42,7 +42,7 @@ class BoardRecognition:
     @staticmethod
     def cleanImage(image, threshold_adjust=10):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        blur = cv2.GaussianBlur(gray, (17, 17), 0)
+        blur = cv2.GaussianBlur(gray, (11, 11), 0)
         ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
         ret2, th2 = cv2.threshold(blur, ret1+threshold_adjust, 255, cv2.THRESH_BINARY)
         auto_thresh = th2

@@ -504,7 +504,7 @@ class UpdatePreviousPage(tk.Frame):
         error_label.pack(pady=50)
 
         retry_button = tk.Button(self, text="Try again!", font=MED_FONT,
-                                  command=lambda: [controller.showFrame(PlayerMovePage)])
+                                 command=lambda: [controller.showFrame(PlayerMovePage)])
         retry_button.pack(pady=30)
 
         suggest_label = tk.Label(self, text="Or you can NOW reset your latest move, and press:", font=MED_FONT)

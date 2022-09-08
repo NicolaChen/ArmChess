@@ -95,7 +95,7 @@ class Game:
             # detects player's hand/tool invasion into board border
             image = self.camera.getFrame()
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            blur = cv2.GaussianBlur(gray, (17, 17), 0)
+            blur = cv2.GaussianBlur(gray, (11, 11), 0)
             ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
             ret2, th2 = cv2.threshold(blur, ret1+self.threshold_adjust, 255, cv2.THRESH_BINARY)
             max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(self.current, th2)
@@ -111,7 +111,7 @@ class Game:
             # detects end of invasion， 10 times make sure
             self.current = self.camera.getFrame()
             gray = cv2.cvtColor(self.current, cv2.COLOR_BGR2GRAY)
-            blur = cv2.GaussianBlur(gray, (17, 17), 0)
+            blur = cv2.GaussianBlur(gray, (11, 11), 0)
             ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
             ret2, th2 = cv2.threshold(blur, ret1+self.threshold_adjust, 255, cv2.THRESH_BINARY)
             max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(self.current, th2)
