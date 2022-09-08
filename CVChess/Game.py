@@ -17,7 +17,7 @@ class Game:
         self.camera = Camera()
         self.board = None
         self.board_perimeter = 0
-        self.contour_threshold = 200
+        self.contour_threshold = 500
         self.current = None
         self.previous = None
         self.engine_latest_move = None

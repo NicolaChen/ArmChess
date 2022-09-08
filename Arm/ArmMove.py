@@ -18,7 +18,7 @@ class ArmMove:
                              150 + self.rot_adjust_5, 0]
         self.ik = IK()
         self.center = [200, 0, 150]
-        self.board_matrix = np.load("./test/chess_board_matrix_V3.npy")  # set None if you need to adjust board_matrix
+        self.board_matrix = np.load("./test/cbm_0908.npy")  # set None if you need to adjust board_matrix
         self.outSpaceCnt = 0
         self.pump = Pump()
         self.armMove()
@@ -170,7 +170,7 @@ class ArmMove:
             self.armMove([self.board_matrix[i0][j0][0], self.board_matrix[i0][j0][1], 150])
             self.armMove([i1, j1, 150])
             self.armMove([i1, j1, 60])
-            self.armMove([i1, j1, h])
+            self.armMove([i1, j1, h-10])
             self.pump.release()
             time.sleep(1.0)
             self.armMove([i1, j1, 60])
@@ -205,7 +205,7 @@ class ArmMove:
             self.tomb_matrix[self.tomb_index[0]][self.tomb_index[1]][2] = self.typeTrans(receive_type.upper())
             self.tomb_index[1] += 1
             if self.tomb_index[1] > 7:
-                self.tomb_index[0] = 2
+                self.tomb_index[0] = 1
                 self.tomb_index[1] = 0
             return x, y
         elif receive_type is None and require_type is not None:
