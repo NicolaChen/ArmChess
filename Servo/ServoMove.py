@@ -26,7 +26,7 @@ class ServoMove:
         angle_2 = angle_matrix[1][0]
         angle_3 = angle_matrix[2][0]
         time_gap = 0.025
-        delta_x = 0.1
+        delta_x = 0.08
 
         for p in np.arange(np.pi / -2, np.pi / 2, delta_x):
             serial_write_buf = []

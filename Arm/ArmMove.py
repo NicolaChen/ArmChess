@@ -11,14 +11,15 @@ class ArmMove:
 
     def __init__(self):
         self.servos = ServoMove()
-        self.rot_adjust_2 = 12.7
-        self.rot_adjust_3 = -10
-        self.rot_adjust_5 = -2
-        self.angle_adjust = [180 + 4.1 + 0.9, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
-                             150 + self.rot_adjust_5, 0]
+        self.rot_adjust_1 = 6
+        self.rot_adjust_2 = -11
+        self.rot_adjust_3 = 3
+        self.rot_adjust_5 = 0
+        self.angle_adjust = [180 + self.rot_adjust_1, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
+                             30 + self.rot_adjust_5, 0]
         self.ik = IK()
         self.center = [200, 0, 150]
-        self.board_matrix = np.load("./test/cbm_0908.npy")  # set None if you need to adjust board_matrix
+        self.board_matrix = np.load("./test/cbm_0909.npy")  # set None if you need to adjust board_matrix
         self.outSpaceCnt = 0
         self.pump = Pump()
         self.armMove()
@@ -78,7 +79,7 @@ class ArmMove:
                 [self.angle_adjust[1] + res['rot_j2'], 0, 0],
                 [self.angle_adjust[2] + res['rot_j3'], 0, 0],
                 [self.angle_adjust[3] - res['rot_j4'], 0, 0],
-                [self.angle_adjust[4] - res['rot_j5'], 0, 0],
+                [self.angle_adjust[4] + res['rot_j5'], 0, 0],
                 [self.angle_adjust[5] + 0, 0, 0]]
 
     def armMove(self, coordinate=None):

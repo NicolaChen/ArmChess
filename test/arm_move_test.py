@@ -9,7 +9,7 @@ arm = ArmMove()
 
 print("Done")
 # time.sleep(5)
-# arm.armCSInit()
+#arm.armCSInit()
 
 # pos_mat = np.zeros((8, 8, 2))
 
@@ -65,6 +65,6 @@ while True:
 
     i += 1
 
-np.save("chess_board_matrix_V3.npy", pos_mat)
+np.save("cbm_0909.npy", pos_mat)
 
 print("Matrix saved!")
