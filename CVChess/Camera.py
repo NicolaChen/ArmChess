@@ -50,7 +50,7 @@ class Camera:
         while True:
             self.lock.acquire()
             ret, frame = self.cam.read()
-            scale = 0.5  # TODO: Test appropriate scale for 800*600 screen
+            scale = 0.5
             size = (int(scale * frame.shape[1]), int(scale * frame.shape[0]))
             self.frame = cv2.resize(frame, size)
             self.lock.release()

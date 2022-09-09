@@ -10,9 +10,9 @@ from Servo.uart_servo.MyCheckSum import MyCheckSum as CheckSum
 class ServoMove:
 
     def __init__(self):
-        self.step_range = [4096, 0, 0, 1024, 1024, 1024]
-        self.angle_range = [360, 360, 360, 300, 300, 300]
-        self.servo_type = ["FTT", "PWM", "PWM", "FTC", "FTC", "FTC"]
+        self.step_range = [4096, 0, 0, 1024, 1000, 1024]
+        self.angle_range = [360, 360, 360, 300, 240, 300]
+        self.servo_type = ["FTT", "PWM", "PWM", "FTC", "HW", "FTC"]
         self.servo_angle = [185, 128.96505375285784, 240.23068603953044, 150, 64.99573979238826, 0]
 
         self.serial = serial.Serial('/dev/ttyS4', 115200)
@@ -49,6 +49,10 @@ class ServoMove:
                     buf_c = bytes(self.ftMoveC(i + 1, step, angle_matrix[i][1], angle_matrix[i][2]))
                     for k in buf_c:
                         serial_write_buf.append(k)
+                elif self.servo_type[i] == "HW":
+                    buf_h = bytes(self.hwMove(i + 1, step, angle_matrix[i][1]))
+                    for h in buf_h:
+                        serial_write_buf.append(h)
                 else:
                     print("Servo%2d move fail!" % (i + 1))
             pulse_2 = 2000 * (old_angle_2 + (angle_2 - old_angle_2) * (np.sin(p) + 1) / 2) / self.angle_range[1] + 500
@@ -123,6 +127,19 @@ class ServoMove:
         buf[5] = address
         buf[6] = val_len
         buf[7] = int(CheckSum(buf[2:-1]).get()[2:], 16)
+        return buf
+
+    def hwMove(self, n, p, t):
+        buf = [0 for _ in range(10)]
+        buf[0] = buf[1] = 0x55
+        buf[2] = n
+        buf[3] = 7
+        buf[4] = 1
+        buf[5] = self.getLowByte(p)
+        buf[6] = self.getHighByte(p)
+        buf[7] = self.getLowByte(t)
+        buf[8] = self.getHighByte(t)
+        buf[9] = int(CheckSum(buf[2:-1]).get()[2:], 16)
         return buf
 
     def closeSerial(self):
