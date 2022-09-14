@@ -20,7 +20,7 @@ print("Done")
 #        else:
 #            pos_mat[i][j] = [152 + 15 + 41 * (0.5 + j), 140 - 37.5 * (0.5 + i)]
 
-pos_mat = np.load('cbm_0908.npy')
+pos_mat = np.load('cbm_0909.npy')
 
 i = 0
 j = 0     
@@ -65,6 +65,6 @@ while True:
 
     i += 1
 
-np.save("cbm_0909.npy", pos_mat)
+np.save("cbm_0913.npy", pos_mat)
 
 print("Matrix saved!")

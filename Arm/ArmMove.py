@@ -14,12 +14,12 @@ class ArmMove:
         self.rot_adjust_1 = 6
         self.rot_adjust_2 = -11
         self.rot_adjust_3 = 3
-        self.rot_adjust_5 = 0
+        self.rot_adjust_5 = 1
         self.angle_adjust = [180 + self.rot_adjust_1, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
                              30 + self.rot_adjust_5, 0]
         self.ik = IK()
         self.center = [200, 0, 150]
-        self.board_matrix = np.load("./test/cbm_0909.npy")  # set None if you need to adjust board_matrix
+        self.board_matrix = np.load("./test/cbm_0913.npy")  # set None if you need to adjust board_matrix
         self.outSpaceCnt = 0
         self.pump = Pump()
         self.armMove()

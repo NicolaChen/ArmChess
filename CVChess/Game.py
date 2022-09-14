@@ -17,7 +17,7 @@ class Game:
         self.camera = Camera()
         self.board = None
         self.board_perimeter = 0
-        self.contour_threshold = 500
+        self.contour_threshold = 200
         self.current = None
         self.previous = None
         self.engine_latest_move = None
@@ -31,7 +31,7 @@ class Game:
         self.arm = ArmMove()
         self.arm_side = "Unknown"
         self.stop_detect_flag = False
-        self.threshold_adjust = 18
+        self.threshold_adjust = 10
 
     def setUp(self):
         """
@@ -90,7 +90,8 @@ class Game:
         """
         Detects player moves from images, get previous image and current image
         """
-        self.previous = self.camera.getFrame()
+        self.previous = self.current
+        begin_cnt = 0
         while True:
             # detects player's hand/tool invasion into board border
             image = self.camera.getFrame()
@@ -98,15 +99,17 @@ class Game:
             blur = cv2.GaussianBlur(gray, (11, 11), 0)
             ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
             ret2, th2 = cv2.threshold(blur, ret1+self.threshold_adjust, 255, cv2.THRESH_BINARY)
-            max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(self.current, th2)
+            max_contour, square_scale, contour_perimeter = BoardRecognition.getContour(image, th2)
             if self.stop_detect_flag:
                 print("STOP DETECT")
                 self.stop_detect_flag = True
                 return 0
             if abs(self.board_perimeter - contour_perimeter) > self.contour_threshold:
                 print("Detect object invasion")
-                break
-        cnt = 0
+                begin_cnt += 1
+                if begin_cnt >= 2:
+                    break
+        end_cnt = 0
         while True:
             # detects end of invasion， 10 times make sure
             self.current = self.camera.getFrame()
@@ -121,8 +124,8 @@ class Game:
                 return 0
             if abs(self.board_perimeter - contour_perimeter) < self.contour_threshold:
                 print("Detect invasion finish")
-                cnt += 1
-                if cnt >= 10:
+                end_cnt += 1
+                if end_cnt >= 10:
                     break
             else:
                 print("Invasion exist")
@@ -237,9 +240,16 @@ class Game:
         """
         Update previous frame in case identify errors caused by unexpected moves
         """
+        time.sleep(2)
+        frame = None
         for _ in range(20):
             frame = self.camera.getFrame()
             if abs(cv2.Laplacian(frame, cv2.CV_64F).var() - self.camera.laplacian_threshold) < 50:
                 break
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        blur = cv2.GaussianBlur(gray, (11, 11), 0)
+        ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        ret2, th2 = cv2.threshold(blur, ret1+self.threshold_adjust, 255, cv2.THRESH_BINARY)
+        _, _, self.board_perimeter = BoardRecognition.getContour(frame, th2)
         print("Update previous frame success.")
         self.current = frame

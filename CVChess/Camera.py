@@ -24,13 +24,10 @@ class Camera:
             frame = self.frame
             self.lock.release()
             frame_copy = frame.copy()
-            cv2.putText(frame_copy, "Laplacian: " + str(cv2.Laplacian(frame, cv2.CV_64F).var()), (100, 100),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0))
-            cv2.putText(frame_copy, 'w: ' + str(frame.shape[1]) + ', h: ' + str(frame.shape[0]) + " threshold_var: "
-                        + str(3E8 / (frame.shape[1] * frame.shape[0])), (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                        (255, 0, 0))
-            cv2.putText(frame_copy, str(cv2.mean(frame)[0] + cv2.mean(frame)[1] + cv2.mean(frame)[2]), (100, 300),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0))
+            if self.flip_flag:
+                frame_copy = cv2.flip(frame, -1)
+            cv2.putText(frame_copy, "Laplacian: " + str(cv2.Laplacian(frame, cv2.CV_64F).var())[:6], (0, 100),
+                        cv2.FONT_HERSHEY_SIMPLEX, 4, (255, 0, 0), 6)
             cv2.namedWindow('calibration', 0)
             cv2.setWindowProperty('calibration', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
             cv2.setMouseCallback('calibration', self.captureEvent)

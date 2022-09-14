@@ -13,7 +13,7 @@ class ServoMove:
         self.step_range = [4096, 0, 0, 1024, 1000, 1024]
         self.angle_range = [360, 360, 360, 300, 240, 300]
         self.servo_type = ["FTT", "PWM", "PWM", "FTC", "HW", "FTC"]
-        self.servo_angle = [185, 128.96505375285784, 240.23068603953044, 150, 64.99573979238826, 0]
+        self.servo_angle = [186, 105.265, 253.231, 150, 114.504, 0]
 
         self.serial = serial.Serial('/dev/ttyS4', 115200)
         self.pwm = PCA9685(0x40)
@@ -58,7 +58,7 @@ class ServoMove:
             pulse_2 = 2000 * (old_angle_2 + (angle_2 - old_angle_2) * (np.sin(p) + 1) / 2) / self.angle_range[1] + 500
             pulse_3 = 2000 * (old_angle_3 + (angle_3 - old_angle_3) * (np.sin(p) + 1) / 2) / self.angle_range[2] + 500
             self.pwm.setServoPulse(0, pulse_2)
-            self.pwm.setServoPulse(1, pulse_3)
+            self.pwm.setServoPulse(4, pulse_3)
             self.serial.write(serial_write_buf)
 
             time.sleep(time_gap)

@@ -21,7 +21,7 @@ class BoardRecognition:
 
     def initializeBoard(self, threshold_adjust=10):
         corners = []
-        while len(corners) < 121:
+        while len(corners) != 121:
             while True:
                 self.image = self.cam.getFrame()
                 print(cv2.Laplacian(self.image, cv2.CV_64F).var())
@@ -76,10 +76,11 @@ class BoardRecognition:
                 max_area = area
         square_scale = int(np.sqrt(max_area) / 9)
         contour_perimeter = max_perimeter
-        cv2.drawContours(image_copy, [max_contour], -1, (0, 0, 0), 1)
+
 
         if debug:
             # Show image with contours drawn
+            cv2.drawContours(image_copy, [max_contour], -1, (0, 0, 0), 1)
             cv2.imshow("Chess Boarder", image_copy)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
@@ -134,20 +135,23 @@ class BoardRecognition:
         return rot_img, rot_bgr
 
     def findLines(self, edges, color_edges):
+        horizontal = []
+        vertical = []
         lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 100, np.array([]), self.square_scale * 4, self.square_scale * 3)
+        if lines is None:
+            return horizontal, vertical
         a, b, c = lines.shape
-        for i in range(a):
-            cv2.line(color_edges, (lines[i][0][0], lines[i][0][1]), (lines[i][0][2], lines[i][0][3]), (0, 255, 0), 2,
-                     cv2.LINE_AA)
 
         if debug:
             # Show image with lines drawn
+            for i in range(a):
+                cv2.line(color_edges, (lines[i][0][0], lines[i][0][1]), (lines[i][0][2], lines[i][0][3]),
+                        (0, 255, 0), 2, cv2.LINE_AA)
             cv2.imshow("Lines", color_edges)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
-        horizontal = []
-        vertical = []
+
         for i in range(a):
             [[x1, y1, x2, y2]] = lines[i]
             new_line = Line(x1, x2, y1, y2)
@@ -175,11 +179,10 @@ class BoardRecognition:
             if not matching_flag:
                 dedupe_corners.append(c)
 
-        for d in dedupe_corners:
-            cv2.circle(color_edges, (d[0], d[1]), 10, (0, 0, 255))
-
         if debug:
             # Show image with corners circled
+            for d in dedupe_corners:
+                cv2.circle(color_edges, (d[0], d[1]), 10, (0, 0, 255))
             cv2.imshow("Corners", color_edges)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
@@ -215,13 +218,13 @@ class BoardRecognition:
                 new_squares = Square(color_edges, c1, c2, c3, c4, position, self.square_scale)
                 if new_squares.error_flag:
                     self.recog_fail_flag = True
-                new_squares.draw(color_edges, (0, 0, 255), 3)
-                new_squares.drawROI(color_edges, (255, 0, 0), 2)
-                new_squares.classify(color_edges)
                 squares.append(new_squares)
 
         if debug:
             # Show image with squares and ROI drawn and position labelled
+            new_squares.draw(color_edges, (0, 0, 255), 3)
+            new_squares.drawROI(color_edges, (255, 0, 0), 2)
+            new_squares.classify(color_edges)
             cv2.imshow("Squares", color_edges)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
