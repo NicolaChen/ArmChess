@@ -9,8 +9,10 @@ LARGE_FONT = ("system", 80)
 MED_FONT = ("system", 50)
 SMALL_FONT = ("system", 30)
 
+
 def enableButton(button):
     button['state'] = tk.NORMAL
+
 
 def disableButton(button):
     button['state'] = tk.DISABLED
@@ -54,7 +56,6 @@ class Application(tk.Tk):
         app.destroy()
 
 
-# TODO: Adjust every label and button pack
 class StartGamePage(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -95,11 +96,11 @@ class InitializePage(tk.Frame):
 
         cali_label = tk.Label(self, text="Set clear board\nwith correct direction", font=LARGE_FONT)
         cali_label.pack(pady=20)
-        cali_cam_button = tk.Button(self, text="Adjust board with camera images", font=MED_FONT,fg="green",
+        cali_cam_button = tk.Button(self, text="Adjust board with camera images", font=MED_FONT, fg="green",
                                     command=lambda: [enableButton(init_board_button), controller.game.caliCam()])
         cali_cam_button.pack(pady=30)
 
-        init_board_button = tk.Button(self, text="Done", font=MED_FONT, state = tk.DISABLED,
+        init_board_button = tk.Button(self, text="Done", font=MED_FONT, state=tk.DISABLED,
                                       command=lambda: [controller.showFrame(SetBoardPage),
                                                        controller.game.analyzeBoard()])
         init_board_button.pack(pady=20)
@@ -206,8 +207,8 @@ class PlayerMovePage(tk.Frame):
         self.input_text.pack(pady=5)
 
         self.get_input_button = tk.Button(self, text="Insert", font=SMALL_FONT,
-                                     command=lambda: [disableButton(self.get_input_button),
-                                                      self.stopThread(), self.insertText()])
+                                          command=lambda: [disableButton(self.get_input_button),
+                                                           self.stopThread(), self.insertText()])
         self.get_input_button.pack(pady=5)
 
         self.ctr = controller

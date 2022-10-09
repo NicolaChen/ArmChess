@@ -44,7 +44,7 @@ class BoardRecognition:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (11, 11), 0)
         ret1, th1 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        ret2, th2 = cv2.threshold(blur, ret1+threshold_adjust, 255, cv2.THRESH_BINARY)
+        ret2, th2 = cv2.threshold(blur, ret1 + threshold_adjust, 255, cv2.THRESH_BINARY)
         auto_thresh = th2
 
         if debug:
@@ -76,7 +76,6 @@ class BoardRecognition:
                 max_area = area
         square_scale = int(np.sqrt(max_area) / 9)
         contour_perimeter = max_perimeter
-
 
         if debug:
             # Show image with contours drawn
@@ -146,11 +145,10 @@ class BoardRecognition:
             # Show image with lines drawn
             for i in range(a):
                 cv2.line(color_edges, (lines[i][0][0], lines[i][0][1]), (lines[i][0][2], lines[i][0][3]),
-                        (0, 255, 0), 2, cv2.LINE_AA)
+                         (0, 255, 0), 2, cv2.LINE_AA)
             cv2.imshow("Lines", color_edges)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
-
 
         for i in range(a):
             [[x1, y1, x2, y2]] = lines[i]
