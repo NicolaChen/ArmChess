@@ -13,7 +13,7 @@ class HallEffectBoard:
 
     def getLine(self):
         while 1:
-            message = self.ser.readline()
+            message = self.ser.readline().decode()
             message_length = len(message)
             if message_length == 21:
                 self.board_initialized_flag = False

@@ -37,7 +37,7 @@ class Application(tk.Tk):
 
         for F in (StartGamePage, SetBoardPage, ChooseDifficultyPage, ChooseColorPage, PlayerMovePage,
                   EngineMovePage, ConfirmPage, GameOverPage, ChoosePromotionPage, PlayerMoveErrorPage, InCheckPage,
-                  BoardMatchErrorPage, UpdatePreviousPage):
+                  BoardMatchErrorPage):
             frame = F(gui, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -95,13 +95,10 @@ class SetBoardPage(tk.Frame):
         set_board_label = tk.Label(self, text="Set the board", font=LARGE_FONT)
         set_board_label.pack(pady=30)
 
-        self.ctr = controller
-
-    def run(self):
-        is_set = False
-        while not is_set:
-            is_set = self.ctr.game.isBoardSet()
-        self.ctr.showFrame(ChooseDifficultyPage)
+        check_board_button = tk.Button(self, text="Done", font=MED_FONT,
+                                       command=lambda: [controller.showFrame(ChooseDifficultyPage),
+                                                        controller.game.isBoardSet()])
+        check_board_button.pack(pady=30)
 
 
 class ChooseDifficultyPage(tk.Frame):
@@ -232,8 +229,8 @@ class PlayerMovePage(tk.Frame):
         if self.ctr.game.over:
             self.ctr.winner.set(self.ctr.game.winner)
             self.ctr.showFrame(GameOverPage)
-        elif self.ctr.game.board.promo:
-            self.ctr.showFrame(ChoosePromotionPage)
+        #elif self.ctr.game.board.promo:
+        #f    self.ctr.showFrame(ChoosePromotionPage)
         elif self.ctr.game.player_move_error:
             self.ctr.showFrame(PlayerMoveErrorPage)
         else:

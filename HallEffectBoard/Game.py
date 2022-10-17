@@ -36,7 +36,8 @@ class Game:
     def isBoardSet(self):
         while True:
             res = self.hall_effect_board.getLine()
-            if res[:7] == 'Message' and self.hall_effect_board.board_initialized_flag is True:
+            print(res)
+            if self.hall_effect_board.board_initialized_flag is True:
                 return True
             time.sleep(0.1)
 
@@ -58,7 +59,7 @@ class Game:
                 self.hall_effect_board.resetStatus()
                 break
             time.sleep(0.1)
-
+        print(self.player_move)
         code = self.chess_engine.updateMove(self.player_move)
         if code == 1:
             # illegal move prompt GUI to open Player Move Error Page
