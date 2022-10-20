@@ -39,3 +39,19 @@ class ChessEng:
         f.close()
 
         print(self.engBoard)
+
+    def getLegalMoves(self, pos):
+        """
+        根据所给移动棋子的位置，遍历全局找到该棋子合法的移动位置，返回串口输出所需的字符串
+        """
+        column = ["a", "b", "c", 'd', "e", "f", "g", "h"]
+        row = ["1", "2", "3", "4", "5", "6", "7", "8"]
+        res_str = pos + "bT"
+        for c in column:
+            for r in row:
+                uci_move = pos + c + r
+                move = chess.Move.from_uci(uci_move)
+                if move in self.engBoard.legal_moves:
+                    res_str += c + r + "gT"
+        res_str += "end"
+        return res_str

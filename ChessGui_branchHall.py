@@ -110,27 +110,27 @@ class ChooseDifficultyPage(tk.Frame):
         choose_difficulty_label.pack(pady=5)
 
         tk.Button(self, text="Easy", font=SMALL_FONT,
-                  command=lambda: [self.setEasy(controller),
+                  command=lambda: [self.setEasy(controller), controller.game.hall_effect_board.startGame(),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()),
                                     controller.showFrame(EngineMovePage))]).pack(pady=5)
         tk.Button(self, text="Intermediate", font=SMALL_FONT, fg="green",
-                  command=lambda: [self.setIntermediate(controller),
+                  command=lambda: [self.setIntermediate(controller), controller.game.hall_effect_board.startGame(),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()),
                                     controller.showFrame(EngineMovePage))]).pack(pady=5)
         tk.Button(self, text="Hard", font=SMALL_FONT, fg="blue",
-                  command=lambda: [self.setHard(controller),
+                  command=lambda: [self.setHard(controller), controller.game.hall_effect_board.startGame(),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()),
                                     controller.showFrame(EngineMovePage))]).pack(pady=5)
         tk.Button(self, text="Extreme", font=SMALL_FONT, fg="purple",
-                  command=lambda: [self.setExtreme(controller),
+                  command=lambda: [self.setExtreme(controller), controller.game.hall_effect_board.startGame(),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()),
                                     controller.showFrame(EngineMovePage))]).pack(pady=5)
         tk.Button(self, text="Master", font=SMALL_FONT, fg="red",
-                  command=lambda: [self.setMaster(controller),
+                  command=lambda: [self.setMaster(controller), controller.game.hall_effect_board.startGame(),
                                    controller.showFrame(PlayerMovePage) if controller.game.arm_side == 'Black' else
                                    (controller.move.set(controller.game.chess_engine.getEngineMove()),
                                     controller.showFrame(EngineMovePage))]).pack(pady=5)
@@ -260,7 +260,7 @@ class EngineMovePage(tk.Frame):
     def engineCheckBoard(self):
         self.ctr.game.moveChess()
         time.sleep(0.5)
-        # self.ctr.game.checkEngineMove()  # Involving Game.boardMatchError
+        self.ctr.game.checkEngineMove()  # Involving Game.boardMatchError
 
         self.after(100, self.checkValid_E)
 

@@ -21,25 +21,21 @@ class Game:
         self.board_match_error = False
         self.arm = ArmMove()
         self.arm_side = "Unknown"
-        self.stop_detect_flag = False
-        self.hall_effect_board = HallEffectBoard()
+        self.hall_effect_board = None
 
     def setUp(self):
         f = open("ChessRecord.txt", "a+")
         f.write("New chess game at: " + str(datetime.now()) + "\r\n")
         f.close()
+        self.hall_effect_board = HallEffectBoard()
         self.arm.armMove()
 
     def setArmSide(self, side):
         self.arm_side = side
 
     def isBoardSet(self):
-        while True:
-            res = self.hall_effect_board.getLine()
-            print(res)
-            if self.hall_effect_board.board_initialized_flag is True:
-                return True
-            time.sleep(0.1)
+        res = self.hall_effect_board.checkBoardSet()
+        print(res)
 
     def engineMove(self):
         """
@@ -54,11 +50,14 @@ class Game:
     def detectPlayerMove(self):
         while True:
             res = self.hall_effect_board.getLine()
-            if len(res) == 4 and self.hall_effect_board.move_made_flag is True:
+            if len(res) == 2:
+                serial_write_str = self.chess_engine.getLegalMoves(res)
+                self.hall_effect_board.ser.write(serial_write_str)
+            elif len(res) == 4 and self.hall_effect_board.move_made_flag is True:
                 self.player_move = res
                 self.hall_effect_board.resetStatus()
                 break
-            time.sleep(0.1)
+
         print(self.player_move)
         code = self.chess_engine.updateMove(self.player_move)
         if code == 1:
