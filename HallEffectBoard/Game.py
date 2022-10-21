@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 
 import chess
@@ -33,10 +32,6 @@ class Game:
     def setArmSide(self, side):
         self.arm_side = side
 
-    def isBoardSet(self):
-        res = self.hall_effect_board.checkBoardSet()
-        print(res)
-
     def engineMove(self):
         """
         Feeds current board to engine; Returns engine's new move
@@ -52,7 +47,7 @@ class Game:
             res = self.hall_effect_board.getLine()
             if len(res) == 2:
                 serial_write_str = self.chess_engine.getLegalMoves(res)
-                self.hall_effect_board.ser.write(serial_write_str)
+                self.hall_effect_board.ser.write(serial_write_str.encode('utf-8'))
             elif len(res) == 4 and self.hall_effect_board.move_made_flag is True:
                 self.player_move = res
                 self.hall_effect_board.resetStatus()
@@ -77,11 +72,13 @@ class Game:
     def checkEngineMove(self):
         while True:
             res = self.hall_effect_board.getLine()
-            if len(res) == 4 and self.hall_effect_board.move_made_flag is True:
+            if len(res) == 2:
+                serial_write_str = self.chess_engine.getLegalMoves(res)
+                self.hall_effect_board.ser.write(serial_write_str.encode('utf-8'))
+            elif len(res) == 4 and self.hall_effect_board.move_made_flag is True:
                 detect_move = res
                 self.hall_effect_board.resetStatus()
                 break
-            time.sleep(0.1)
         if detect_move != self.engine_latest_move.uci():
             print("D: " + detect_move + "\nE: " + self.engine_latest_move.uci())
             self.board_match_error = True

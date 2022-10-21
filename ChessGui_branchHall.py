@@ -95,10 +95,11 @@ class SetBoardPage(tk.Frame):
         set_board_label = tk.Label(self, text="Set the board", font=LARGE_FONT)
         set_board_label.pack(pady=30)
 
-        check_board_button = tk.Button(self, text="Done", font=MED_FONT,
-                                       command=lambda: [controller.showFrame(ChooseDifficultyPage),
-                                                        controller.game.isBoardSet()])
-        check_board_button.pack(pady=30)
+        self.ctr = controller
+
+    def run(self):
+        self.ctr.game.hall_effect_board.checkBoardSet()
+        self.ctr.showFrame(ChooseDifficultyPage)
 
 
 class ChooseDifficultyPage(tk.Frame):

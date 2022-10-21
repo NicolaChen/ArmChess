@@ -4,7 +4,7 @@ import serial
 class HallEffectBoard:
 
     def __init__(self):
-        self.ser = serial.Serial('/dev/ttyS4', 115200)
+        self.ser = serial.Serial('/dev/ttyUSB0', 115200)
         self.previous_move = None
         self.latest_move = None
         self.board_initialized_flag = False
@@ -32,22 +32,19 @@ class HallEffectBoard:
             elif message_length != 0:
                 self.error_move_flag = True
                 return message[:-2]
-            else:
-                continue
 
     def checkBoardSet(self):
         """
         检查棋盘初始化摆放情况，串口发送"check"，等待示意完成的字符串
         """
-        self.ser.write("check")
-        res = self.getLine()
-        return res
+        self.ser.write(b'checkT')
+        self.getLine()
 
     def startGame(self):
         """
         开始棋盘检测
         """
-        self.ser.write("start")
+        self.ser.write(b'startT')
         print("hall effect board start detect...\n")
 
     def resetStatus(self):

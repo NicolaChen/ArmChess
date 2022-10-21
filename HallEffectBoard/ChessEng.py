@@ -46,12 +46,14 @@ class ChessEng:
         """
         column = ["a", "b", "c", 'd', "e", "f", "g", "h"]
         row = ["1", "2", "3", "4", "5", "6", "7", "8"]
-        res_str = pos + "bT"
+        res_str = "T" + pos + "bT"
         for c in column:
             for r in row:
+                if c == pos[0] and r == pos[1]:
+                    continue
                 uci_move = pos + c + r
                 move = chess.Move.from_uci(uci_move)
                 if move in self.engBoard.legal_moves:
                     res_str += c + r + "gT"
-        res_str += "end"
+        res_str += "endT"
         return res_str
