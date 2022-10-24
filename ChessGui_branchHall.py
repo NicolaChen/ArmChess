@@ -1,5 +1,4 @@
 import threading
-import time
 import tkinter as tk
 from tkinter import *
 
@@ -257,11 +256,10 @@ class EngineMovePage(tk.Frame):
         detect_thread = threading.Thread(target=self.engineCheckBoard)
         detect_thread.setDaemon(True)
         detect_thread.start()
+        self.after(100, self.ctr.game.checkEngineMove)
 
     def engineCheckBoard(self):
         self.ctr.game.moveChess()
-        time.sleep(0.5)
-        self.ctr.game.checkEngineMove()  # Involving Game.boardMatchError
 
         self.after(100, self.checkValid_E)
 

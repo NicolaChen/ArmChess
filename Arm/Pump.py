@@ -1,6 +1,8 @@
 import time
+
 import wiringpi
 from wiringpi import GPIO
+
 pump = 16
 valve = 15
 
@@ -20,6 +22,7 @@ class Pump:
         time.sleep(0.5)
         wiringpi.digitalWrite(valve, GPIO.HIGH)
         wiringpi.digitalWrite(pump, GPIO.LOW)
+
     @staticmethod
     def release():
         wiringpi.digitalWrite(valve, GPIO.LOW)

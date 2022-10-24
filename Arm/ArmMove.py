@@ -98,31 +98,36 @@ class ArmMove:
                      h0=10, h1=10, h2=10):
 
         if capture_flag:
-            self.moveChess_out(arm_side, uci_move[2:4], self.outSpaceManagement(piece_1, None), h1)
+            self.moveChess_in_out(arm_side, uci_move[0:2], self.tombArrange(), h0)
+            self.moveChess_in_out(arm_side, uci_move[2:4], self.tombArrange(piece_1, None), h1)
+            self.moveChess_in_out(arm_side, self.tombArrange(), uci_move[2:4], h0)
+            self.armMove(self.center)
+            return
+
         # in-board move
-        self.moveChess_in(arm_side, uci_move, h0)
+        self.moveChess_inside(arm_side, uci_move, h0)
 
         # special condition
         if promotion_flag:
-            self.moveChess_out(arm_side, uci_move[2:4], self.outSpaceManagement(piece_0, None))
+            self.moveChess_in_out(arm_side, uci_move[2:4], self.tombArrange(piece_0, None))
             promo_code = ['Q', 'R', 'B', 'N']
-            self.moveChess_out(arm_side, self.outSpaceManagement(None, promo_code[promotion_flag - 1]), uci_move[2:4],
-                               h2)
+            self.moveChess_in_out(arm_side, self.tombArrange(None, promo_code[promotion_flag - 1]), uci_move[2:4],
+                                  h2)
         elif en_passant_flag:
-            self.moveChess_out(arm_side, uci_move[0] + uci_move[3], self.outSpaceManagement(piece_0, None))
+            self.moveChess_in_out(arm_side, uci_move[0] + uci_move[3], self.tombArrange(piece_0, None))
         elif uci_move in ['e1g1', 'e1c1', 'e8g8', 'e8c8']:
             if uci_move == 'e1g1':
-                self.moveChess_in(arm_side, 'h1f1', 15)
+                self.moveChess_inside(arm_side, 'h1f1', 15)
             elif uci_move == 'e1c1':
-                self.moveChess_in(arm_side, 'a1d1', 15)
+                self.moveChess_inside(arm_side, 'a1d1', 15)
             elif uci_move == 'e8g8':
-                self.moveChess_in(arm_side, 'h8f8', 15)
+                self.moveChess_inside(arm_side, 'h8f8', 15)
             else:
-                self.moveChess_in(arm_side, 'a8d8', 15)
+                self.moveChess_inside(arm_side, 'a8d8', 15)
         # arm return to center
         self.armMove(self.center)
 
-    def moveChess_in(self, arm_side, uci_move, h=5):
+    def moveChess_inside(self, arm_side, uci_move, h=5):
 
         col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
         if arm_side == 'Black':
@@ -150,7 +155,7 @@ class ArmMove:
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 60])
         self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
 
-    def moveChess_out(self, arm_side, ori_pos, des_pos, h=5):
+    def moveChess_in_out(self, arm_side, ori_pos, des_pos, h=5):
 
         col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
@@ -199,7 +204,7 @@ class ArmMove:
             self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 60])
             self.armMove([self.board_matrix[i1][j1][0], self.board_matrix[i1][j1][1], 150])
 
-    def outSpaceManagement(self, receive_type=None, require_type=None):
+    def tombArrange(self, receive_type=None, require_type=None):
         if receive_type is not None and require_type is None:
             x = self.tomb_matrix[self.tomb_index[0]][self.tomb_index[1]][0]
             y = self.tomb_matrix[self.tomb_index[0]][self.tomb_index[1]][1]
@@ -217,6 +222,7 @@ class ArmMove:
         else:
             return 300, -240
 
-    def typeTrans(self, type):
+    @staticmethod
+    def typeTrans(my_type):
         type_index = ['P', 'N', 'B', 'R', 'Q']
-        return type_index.index(type)
+        return type_index.index(my_type)
