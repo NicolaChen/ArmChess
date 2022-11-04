@@ -28,8 +28,8 @@ while True:
     if j == 4:
         break
     arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 150])
-    arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 30])
-    arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 15])
+    arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 30+30])
+    arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 15+30])
     while True:
         dnd_in = input("Array of direction and distance, for example [0, 30]\r\n")
         if dnd_in == '' or dnd_in == 'n':
@@ -38,14 +38,14 @@ while True:
         pos_mat[i][j][dnd[0]] += dnd[1]
         arm.armMove([200, 0, 150])
         arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 150])
-        arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 30])
-        arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 15])
+        arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 30+30])
+        arm.armMove([pos_mat[i][j][0], pos_mat[i][j][1], 15+30])
     arm.armMove([200, 0, 150])
     time.sleep(1)
 
     arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 150])
-    arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 30])
-    arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 15])
+    arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 30+30])
+    arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 15+30])
     while True:
         dnd_in = input("Array of direction and distance, for example [0, 30]\r\n")
         if dnd_in == '' or dnd_in == 'n':
@@ -54,8 +54,8 @@ while True:
         pos_mat[7 - i][7 - j][dnd[0]] += dnd[1]
         arm.armMove([200, 0, 150])
         arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 150])
-        arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 30])
-        arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 15])
+        arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 30+30])
+        arm.armMove([pos_mat[7 - i][7 - j][0], pos_mat[7 - i][7 - j][1], 15+30])
     arm.armMove([200, 0, 150])
     time.sleep(1)
     if i == 7:
@@ -65,6 +65,6 @@ while True:
 
     i += 1
 
-np.save("cbm_0913.npy", pos_mat)
+np.save("cbm_1102.npy", pos_mat)
 
 print("Matrix saved!")

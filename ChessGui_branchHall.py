@@ -51,6 +51,8 @@ class Application(tk.Tk):
 
     def destroyFrame(self):
         self.game.chess_engine.engine.close()
+        self.game.arm.servos.serial.close()
+        self.game.hall_effect_board.ser.close()
         app.destroy()
 
 
@@ -97,7 +99,8 @@ class SetBoardPage(tk.Frame):
         self.ctr = controller
 
     def run(self):
-        self.ctr.game.hall_effect_board.checkBoardSet()
+        while self.ctr.game.hall_effect_board.checkBoardSet()[:7] != "Message":
+            continue
         self.ctr.showFrame(ChooseDifficultyPage)
 
 

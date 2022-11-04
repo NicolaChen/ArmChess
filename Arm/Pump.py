@@ -19,10 +19,11 @@ class Pump:
     @staticmethod
     def capture():
         wiringpi.digitalWrite(pump, GPIO.HIGH)
-        time.sleep(0.5)
-        wiringpi.digitalWrite(valve, GPIO.HIGH)
+        time.sleep(1.4)
         wiringpi.digitalWrite(pump, GPIO.LOW)
 
     @staticmethod
     def release():
+        wiringpi.digitalWrite(valve, GPIO.HIGH)
+        time.sleep(0.2)
         wiringpi.digitalWrite(valve, GPIO.LOW)

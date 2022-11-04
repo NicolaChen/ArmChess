@@ -28,6 +28,7 @@ class Game:
         f.close()
         self.hall_effect_board = HallEffectBoard()
         self.arm.armMove()
+        self.hall_effect_board.restartMCU()
 
     def setArmSide(self, side):
         self.arm_side = side
@@ -45,6 +46,7 @@ class Game:
     def detectPlayerMove(self):
         while True:
             res = self.hall_effect_board.getLine()
+            print(res)
             if len(res) == 2:
                 serial_write_str = self.chess_engine.getLegalMoves(res)
                 self.hall_effect_board.ser.write(serial_write_str.encode('utf-8'))
@@ -107,9 +109,9 @@ class Game:
 
     def moveChess(self):
 
-        medium = 15
-        high = 30
-        h0 = h1 = 5
+        medium = 45
+        high = 60
+        h0 = h1 = 35
         self.engine_latest_move = self.chess_engine.engine_move
         piece_0 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[:2])))
         piece_1 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[2:4])))

@@ -54,6 +54,11 @@ class ChessEng:
                 uci_move = pos + c + r
                 move = chess.Move.from_uci(uci_move)
                 if move in self.engBoard.legal_moves:
-                    res_str += c + r + "gT"
+                    if self.engBoard.is_capture(move):
+                        res_str += c + r + "mT"
+                    else:
+                        res_str += c + r + "gT"
         res_str += "endT"
+        if len(res_str) == 9:
+            res_str = res_str[:3] + "r" + res_str[4:]
         return res_str

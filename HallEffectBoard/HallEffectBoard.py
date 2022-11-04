@@ -38,7 +38,7 @@ class HallEffectBoard:
         检查棋盘初始化摆放情况，串口发送"check"，等待示意完成的字符串
         """
         self.ser.write(b'checkT')
-        self.getLine()
+        return self.getLine()
 
     def startGame(self):
         """
@@ -46,6 +46,10 @@ class HallEffectBoard:
         """
         self.ser.write(b'startT')
         print("hall effect board start detect...\n")
+
+    def restartMCU(self):
+        self.ser.write(b'resetT')
+        print("board MCU restarted")
 
     def resetStatus(self):
         self.move_made_flag = False
