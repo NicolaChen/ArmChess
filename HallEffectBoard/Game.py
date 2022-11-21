@@ -64,7 +64,7 @@ class Game:
             self.player_move_error = False
             # write to Game.txt file
             f = open("ChessRecord.txt", "a+")
-            f.write(chess.Move.from_uci(self.player_move).uci() + "\r\n")
+            f.write(self.player_move + "\r\n")
             f.close()
         # check for Game Over
         if self.chess_engine.engBoard.is_checkmate():
@@ -87,26 +87,6 @@ class Game:
         else:
             self.board_match_error = False
 
-    def playerPromotion(self, move):
-        print(move)
-        code = self.chess_engine.updateMove(move)
-        if code == 1:
-            # illegal move prompt GUI to open PlayerMoveError Page
-            print("Error")
-            self.player_move_error = True
-        else:
-            self.player_move_error = False
-
-            # write to Game.txt file
-            f = open("ChessRecord.txt", "a+")
-            f.write(chess.Move.from_uci(move).uci() + "\r\n")
-            f.close()
-
-        # check Game Over
-        if self.chess_engine.engBoard.is_checkmate():
-            self.winner = "You win!"
-            self.over = True
-
     def moveChess(self):
 
         medium = 45
@@ -125,7 +105,8 @@ class Game:
             h1 = medium
         if self.chess_engine.engBoard.is_en_passant(chess.Move.from_uci(self.engine_latest_move.uci())):
             self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
-                                  piece_0, piece_1, 1)
+                                  piece_0, piece_1,
+                                  1)
         elif len(self.engine_latest_move.uci()) == 5:
             piece_promo = self.engine_latest_move.uci()[-1]
             if piece_promo == "q":
@@ -141,12 +122,21 @@ class Game:
                     promo_code = 4
             if self.chess_engine.engBoard.is_capture(chess.Move.from_uci(self.engine_latest_move.uci())):
                 self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
-                                      piece_0, piece_1, 0, 1, promo_code, h0, h1, h2)
+                                      piece_0, piece_1,
+                                      0, 1, promo_code,
+                                      h0, h1, h2)
             else:
-                self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(), 0, 0, promo_code, h0, h1, h2)
+                self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
+                                      piece_0, piece_1,
+                                      0, 0, promo_code,
+                                      h0, h1, h2)
         elif self.chess_engine.engBoard.is_capture(chess.Move.from_uci(self.engine_latest_move.uci())):
             self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
-                                  piece_0, piece_1, 0, 1, 0, h0, h1)
+                                  piece_0, piece_1,
+                                  0, 1, 0,
+                                  h0, h1)
         else:
             self.arm.armMoveChess(self.arm_side, self.engine_latest_move.uci(),
-                                  piece_0, piece_1, 0, 0, 0, h0)
+                                  piece_0, piece_1,
+                                  0, 0, 0,
+                                  h0)

@@ -35,8 +35,7 @@ class Application(tk.Tk):
         self.error_cnt = 0
 
         for F in (StartGamePage, SetBoardPage, ChooseDifficultyPage, ChooseColorPage, PlayerMovePage,
-                  EngineMovePage, ConfirmPage, GameOverPage, ChoosePromotionPage, PlayerMoveErrorPage, InCheckPage,
-                  BoardMatchErrorPage):
+                  EngineMovePage, ConfirmPage, GameOverPage, PlayerMoveErrorPage, InCheckPage):
             frame = F(gui, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -183,32 +182,13 @@ class PlayerMovePage(tk.Frame):
         player_move_label = tk.Label(self, textvariable=self.text, font=SMALL_FONT, fg="green")
         player_move_label.pack(pady=5)
 
-        # move_input_label = tk.Label(self, text="Or you can manually input your move in UCI: ", font=SMALL_FONT)
-        # move_input_label.pack(pady=5)
-        #
-        # self.input_text = tk.Text(self, width=5, height=2)
-        # self.input_text.pack(pady=5)
-        #
-        # self.get_input_button = tk.Button(self, text="Insert", font=SMALL_FONT,
-        #                                   command=lambda: [disableButton(self.get_input_button),
-        #                                                    self.stopThread(), self.insertText()])
-        # self.get_input_button.pack(pady=5)
-
         self.ctr = controller
         self.detect_thread = None
 
     def stopThread(self):
         self.ctr.game.stop_detect_flag = True
 
-    # def insertText(self):
-    #     insert_text = self.input_text.get("1.0", "end-1c")
-    #     self.input_text.delete("1.0", "end")
-    #     self.ctr.game.playerMove(insert_text)
-    #     self.text.set(self.ctr.game.player_move)
-    #     self.after(2000, self.checkValid_P)
-
     def run(self):
-        # enableButton(self.get_input_button)
         self.ctr.game.stop_detect_flag = False
         self.text.set("Waiting for your move ...")
         self.detect_thread = threading.Thread(target=self.waitPlayerMove)
@@ -232,8 +212,6 @@ class PlayerMovePage(tk.Frame):
         if self.ctr.game.over:
             self.ctr.winner.set(self.ctr.game.winner)
             self.ctr.showFrame(GameOverPage)
-        #elif self.ctr.game.board.promo:
-        #f    self.ctr.showFrame(ChoosePromotionPage)
         elif self.ctr.game.player_move_error:
             self.ctr.showFrame(PlayerMoveErrorPage)
         else:
@@ -255,7 +233,6 @@ class EngineMovePage(tk.Frame):
         self.ctr = controller
 
     def run(self):
-        # self.after(100, self.engineMoveChess)
         detect_thread = threading.Thread(target=self.engineMoveChess)
         detect_thread.setDaemon(True)
         detect_thread.start()
@@ -267,18 +244,14 @@ class EngineMovePage(tk.Frame):
         self.after(100, self.checkValid_E)
 
     def checkValid_E(self):
-
-        if self.ctr.game.board_match_error:
-            self.ctr.showFrame(BoardMatchErrorPage)
+        self.ctr.game.engineMove()
+        if self.ctr.game.over:
+            self.ctr.winner.set(self.ctr.game.winner)
+            self.ctr.showFrame(GameOverPage)
+        elif self.ctr.game.is_check:
+            self.ctr.showFrame(InCheckPage)
         else:
-            self.ctr.game.engineMove()
-            if self.ctr.game.over:
-                self.ctr.winner.set(self.ctr.game.winner)
-                self.ctr.showFrame(GameOverPage)
-            elif self.ctr.game.is_check:
-                self.ctr.showFrame(InCheckPage)
-            else:
-                self.ctr.showFrame(PlayerMovePage)
+            self.ctr.showFrame(PlayerMovePage)
 
 
 class ConfirmPage(tk.Frame):
@@ -309,80 +282,6 @@ class GameOverPage(tk.Frame):
         quit_button = tk.Button(self, text="Quit", font=MED_FONT,
                                 command=lambda: controller.destroyFrame())
         quit_button.pack(pady=30)
-
-
-class ChoosePromotionPage(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-
-        choose_label = tk.Label(self, text="Choose your promotion", font=LARGE_FONT)
-        choose_label.pack(pady=5)
-
-        queen_button = tk.Button(self, text="Queen(Q)",
-                                 command=lambda: [self.setQueen(controller)])
-        rook_button = tk.Button(self, text="Rook(R)",
-                                command=lambda: [self.setRook(controller)])
-        bishop_button = tk.Button(self, text="Bishop(B)",
-                                  command=lambda: [self.setBishop(controller)])
-        knight_button = tk.Button(self, text="Knight(N)",
-                                  command=lambda: [self.setKnight(controller)])
-        queen_button.pack(pady=10)
-        rook_button.pack(pady=10)
-        bishop_button.pack(pady=10)
-        knight_button.pack(pady=10)
-
-    @staticmethod
-    def setQueen(controller):
-
-        # controller.game.board.promotion = 'q'
-        # controller.game.board.move = controller.game.board.move + 'q'
-        controller.game.playerPromotion(controller.game.player_move)  # TODO: Adjust promotion func here and in Game
-
-        if controller.game.player_move_error:
-            controller.showFrame(PlayerMoveErrorPage)
-        else:
-            controller.move.set(controller.game.chess_engine.getEngineMove())
-            controller.showFrame(EngineMovePage)
-
-    @staticmethod
-    def setRook(controller):
-
-        # controller.game.board.promotion = 'r'
-        # controller.game.board.move = controller.game.board.move + 'r'
-        controller.game.playerPromotion(controller.game.player_move)
-
-        if controller.game.player_move_error:
-            controller.showFrame(PlayerMoveErrorPage)
-        else:
-            controller.move.set(controller.game.chess_engine.getEngineMove())
-            controller.showFrame(EngineMovePage)
-
-    @staticmethod
-    def setBishop(controller):
-
-        # controller.game.board.promotion = 'b'
-        # controller.game.board.move = controller.game.board.move + 'b'
-        controller.game.playerPromotion(controller.game.player_move)
-
-        if controller.game.player_move_error:
-            controller.showFrame(PlayerMoveErrorPage)
-        else:
-            controller.move.set(controller.game.chess_engine.getEngineMove())
-            controller.showFrame(EngineMovePage)
-
-    @staticmethod
-    def setKnight(controller):
-
-        # controller.game.board.promotion = 'n'
-        # controller.game.board.move = controller.game.board.move + 'n'
-        controller.game.playerPromotion(controller.game.player_move)
-
-        if controller.game.player_move_error:
-            controller.showFrame(PlayerMoveErrorPage)
-        else:
-            controller.move.set(controller.game.chess_engine.getEngineMove())
-            controller.showFrame(EngineMovePage)
 
 
 class PlayerMoveErrorPage(tk.Frame):
@@ -443,37 +342,6 @@ class InCheckPage(tk.Frame):
             self.after_cancel(clock)
             self.countdown_label["text"] = "0"
             self.ctr.showFrame(PlayerMovePage)
-
-
-class BoardMatchErrorPage(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-
-        match_error_label = tk.Label(self, text="Board match error!\nArm will retry in",
-                                     font=LARGE_FONT)
-        match_error_label.pack(pady=20)
-
-        self.countdown_label = tk.Label(self, text="5 s", font=MED_FONT)
-        self.countdown_label.pack(pady=30)
-
-        self.ctr = controller
-
-    def run(self):
-        self.countdown_label["text"] = "5 s"
-        self.after(1000, self.countdown, 5)
-
-    def countdown(self, n):
-        n -= 1
-        clock = self.after(1000, self.countdown, n)
-
-        if n != 0:
-            self.countdown_label["text"] = str(n) + " s"
-
-        else:
-            self.after_cancel(clock)
-            self.countdown_label["text"] = "0"
-            self.ctr.showFrame(EngineMovePage)
 
 
 # Start chess game
