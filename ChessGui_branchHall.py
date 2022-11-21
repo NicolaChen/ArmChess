@@ -255,13 +255,13 @@ class EngineMovePage(tk.Frame):
         self.ctr = controller
 
     def run(self):
-        # self.after(100, self.engineCheckBoard)
-        detect_thread = threading.Thread(target=self.engineCheckBoard)
+        # self.after(100, self.engineMoveChess)
+        detect_thread = threading.Thread(target=self.engineMoveChess)
         detect_thread.setDaemon(True)
         detect_thread.start()
         self.after(100, self.ctr.game.checkEngineMove)
 
-    def engineCheckBoard(self):
+    def engineMoveChess(self):
         self.ctr.game.moveChess()
 
         self.after(100, self.checkValid_E)
