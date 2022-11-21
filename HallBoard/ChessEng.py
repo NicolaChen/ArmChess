@@ -46,7 +46,7 @@ class ChessEng:
         """
         column = ["a", "b", "c", 'd', "e", "f", "g", "h"]
         row = ["1", "2", "3", "4", "5", "6", "7", "8"]
-        res_str = "T" + pos + "bT"
+        res_str = pos + "bT"
         for c in column:
             for r in row:
                 if c == pos[0] and r == pos[1]:
@@ -58,7 +58,7 @@ class ChessEng:
                         res_str += c + r + "mT"
                     else:
                         res_str += c + r + "gT"
-        res_str += "endT"
-        if len(res_str) == 9:
-            res_str = res_str[:3] + "r" + res_str[4:]
+        res_str += "end"
+        if len(res_str) == 7:
+            res_str = res_str[:2] + "r" + res_str[3:]
         return res_str

@@ -7,10 +7,10 @@ class HallEffectBoard:
 
     def __init__(self):
         self.mqtt = Mqtt()
+        self.data_template = '{{"dev_id": "{0}", "msg_code": {1}, "msg": "{2}"}}'
         self.dev_id_c = None
         self.dev_id_b = None
         self.mqtt.run()
-        self.data_template = "{'dev_id': {0}, 'msg_code': {1}, 'msg': {}}"
         self.b_connect = 10
         self.b_standby = 11
         self.b_error = 12
@@ -33,14 +33,19 @@ class HallEffectBoard:
         mqtt返回msg_code 20，返回msg内容任意，这里设为对方的dev_id_b
         函数返回布尔值表示配对成功与否
         """
+        cnt = 0
+        cnt_threshold = 3
         while True:
             local_dict = self.mqtt.r_dict
             if local_dict['msg_code'] == 10:
+                cnt += 1
                 self.dev_id_c = local_dict['msg']
                 self.dev_id_b = local_dict['dev_id']
                 print("Info: board match request received.")
-                self.mqtt.publish(self.data_template.format(self.dev_id_c, self.c_connect, self.dev_id_b))
-                print("Info: controller match request sent.")
+                if cnt % cnt_threshold == 0:
+                    self.mqtt.publish(self.data_template.format(self.dev_id_c, self.c_connect, self.dev_id_b))
+                    print("Info: controller match request sent.")
+                time.sleep(1)
             elif local_dict['dev_id'] == self.dev_id_b and local_dict['msg_code'] == self.b_standby:
                 print("Info: mqtt match success.")
                 break

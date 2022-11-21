@@ -37,7 +37,7 @@ class Mqtt:
     def publish(self, msg):
         result = self.client.publish(self.topic, msg)
         if result[0] == 0:
-            print("qMqtt publish message: {0}".format(msg))
+            print("Mqtt publish message: {0}".format(msg))
         else:
             print("Failed to send message to topic {0}".format(self.topic))
 

@@ -12,14 +12,14 @@ class ArmMove:
     def __init__(self):
         self.servos = ServoMove()
         self.rot_adjust_1 = 6
-        self.rot_adjust_2 = -11
-        self.rot_adjust_3 = 3
+        self.rot_adjust_2 = -17.5
+        self.rot_adjust_3 = -5
         self.rot_adjust_5 = 1
         self.angle_adjust = [180 + self.rot_adjust_1, 90 + self.rot_adjust_2, 90 + self.rot_adjust_3, 420,
                              30 + self.rot_adjust_5, 0]
         self.ik = IK()
         self.center = [200, 0, 150]
-        self.board_matrix = np.load("./test/cbm_1102.npy")  # set None if you need to adjust board_matrix
+        self.board_matrix = np.load("./test/cbm_1114.npy")  # set None if you need to adjust board_matrix
         self.outSpaceCnt = 0
         self.pump = Pump()
         self.armMove()
@@ -95,7 +95,7 @@ class ArmMove:
             return True
 
     def armMoveChess(self, arm_side, uci_move, piece_0, piece_1, en_passant_flag=0, capture_flag=0, promotion_flag=0,
-                     h0=10, h1=10, h2=10):
+                     h0=35, h1=35, h2=35):
 
         if capture_flag:
             self.moveChess_in_out(arm_side, uci_move[0:2], self.tombArrange(), h0)
@@ -117,17 +117,17 @@ class ArmMove:
             self.moveChess_in_out(arm_side, uci_move[0] + uci_move[3], self.tombArrange(piece_0, None))
         elif uci_move in ['e1g1', 'e1c1', 'e8g8', 'e8c8']:
             if uci_move == 'e1g1':
-                self.moveChess_inside(arm_side, 'h1f1', 15)
+                self.moveChess_inside(arm_side, 'h1f1', 45)
             elif uci_move == 'e1c1':
-                self.moveChess_inside(arm_side, 'a1d1', 15)
+                self.moveChess_inside(arm_side, 'a1d1', 45)
             elif uci_move == 'e8g8':
-                self.moveChess_inside(arm_side, 'h8f8', 15)
+                self.moveChess_inside(arm_side, 'h8f8', 45)
             else:
-                self.moveChess_inside(arm_side, 'a8d8', 15)
+                self.moveChess_inside(arm_side, 'a8d8', 45)
         # arm return to center
         self.armMove(self.center)
 
-    def moveChess_inside(self, arm_side, uci_move, h=5+30):
+    def moveChess_inside(self, arm_side, uci_move, h=35):
 
         col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
         if arm_side == 'Black':

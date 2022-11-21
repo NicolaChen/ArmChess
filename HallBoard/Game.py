@@ -20,7 +20,6 @@ class Game:
         self.arm = ArmMove()
         self.arm_side = "Unknown"
         self.board = HallEffectBoard()
-        self.board.resetBoard()
 
     def setUp(self):
         f = open("ChessRecord.txt", "a+")
@@ -69,6 +68,7 @@ class Game:
             self.over = True
 
     def sendEngineMove(self):
+        self.engine_latest_move = self.chess_engine.engine_move
         self.board.sendUCI(self.engine_latest_move.uci())
         print(self.engine_latest_move)
 
@@ -97,7 +97,6 @@ class Game:
         medium = 45
         high = 60
         h0 = h1 = 35
-        self.engine_latest_move = self.chess_engine.engine_move
         piece_0 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[:2])))
         piece_1 = str(self.chess_engine.engBoard.piece_at(chess.parse_square(self.engine_latest_move.uci()[2:4])))
         if piece_0.upper() in ["K", "Q"]:
