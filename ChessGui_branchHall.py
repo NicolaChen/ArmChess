@@ -35,7 +35,7 @@ class Application(tk.Tk):
         self.error_cnt = 0
 
         for F in (StartGamePage, SetBoardPage, ChooseDifficultyPage, ChooseColorPage, PlayerMovePage,
-                  EngineMovePage, ConfirmPage, GameOverPage, ChoosePromotionPage, PlayerMoveErrorPage, InCheckPage,
+                  EngineMovePage, ConfirmPage, GameOverPage, PlayerMoveErrorPage, InCheckPage,
                   BoardMatchErrorPage):
             frame = F(gui, self)
             self.frames[F] = frame
@@ -232,8 +232,6 @@ class PlayerMovePage(tk.Frame):
         if self.ctr.game.over:
             self.ctr.winner.set(self.ctr.game.winner)
             self.ctr.showFrame(GameOverPage)
-        #elif self.ctr.game.board.promo:
-        #f    self.ctr.showFrame(ChoosePromotionPage)
         elif self.ctr.game.player_move_error:
             self.ctr.showFrame(PlayerMoveErrorPage)
         else:
@@ -309,80 +307,6 @@ class GameOverPage(tk.Frame):
         quit_button = tk.Button(self, text="Quit", font=MED_FONT,
                                 command=lambda: controller.destroyFrame())
         quit_button.pack(pady=30)
-
-
-class ChoosePromotionPage(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-
-        choose_label = tk.Label(self, text="Choose your promotion", font=LARGE_FONT)
-        choose_label.pack(pady=5)
-
-        queen_button = tk.Button(self, text="Queen(Q)",
-                                 command=lambda: [self.setQueen(controller)])
-        rook_button = tk.Button(self, text="Rook(R)",
-                                command=lambda: [self.setRook(controller)])
-        bishop_button = tk.Button(self, text="Bishop(B)",
-                                  command=lambda: [self.setBishop(controller)])
-        knight_button = tk.Button(self, text="Knight(N)",
-                                  command=lambda: [self.setKnight(controller)])
-        queen_button.pack(pady=10)
-        rook_button.pack(pady=10)
-        bishop_button.pack(pady=10)
-        knight_button.pack(pady=10)
-
-    @staticmethod
-    def setQueen(controller):
-
-        # controller.game.board.promotion = 'q'
-        # controller.game.board.move = controller.game.board.move + 'q'
-        controller.game.playerPromotion(controller.game.player_move)  # TODO: Adjust promotion func here and in Game
-
-        if controller.game.player_move_error:
-            controller.showFrame(PlayerMoveErrorPage)
-        else:
-            controller.move.set(controller.game.chess_engine.getEngineMove())
-            controller.showFrame(EngineMovePage)
-
-    @staticmethod
-    def setRook(controller):
-
-        # controller.game.board.promotion = 'r'
-        # controller.game.board.move = controller.game.board.move + 'r'
-        controller.game.playerPromotion(controller.game.player_move)
-
-        if controller.game.player_move_error:
-            controller.showFrame(PlayerMoveErrorPage)
-        else:
-            controller.move.set(controller.game.chess_engine.getEngineMove())
-            controller.showFrame(EngineMovePage)
-
-    @staticmethod
-    def setBishop(controller):
-
-        # controller.game.board.promotion = 'b'
-        # controller.game.board.move = controller.game.board.move + 'b'
-        controller.game.playerPromotion(controller.game.player_move)
-
-        if controller.game.player_move_error:
-            controller.showFrame(PlayerMoveErrorPage)
-        else:
-            controller.move.set(controller.game.chess_engine.getEngineMove())
-            controller.showFrame(EngineMovePage)
-
-    @staticmethod
-    def setKnight(controller):
-
-        # controller.game.board.promotion = 'n'
-        # controller.game.board.move = controller.game.board.move + 'n'
-        controller.game.playerPromotion(controller.game.player_move)
-
-        if controller.game.player_move_error:
-            controller.showFrame(PlayerMoveErrorPage)
-        else:
-            controller.move.set(controller.game.chess_engine.getEngineMove())
-            controller.showFrame(EngineMovePage)
 
 
 class PlayerMoveErrorPage(tk.Frame):
